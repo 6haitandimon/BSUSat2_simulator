@@ -31,24 +31,29 @@ int main() {
   gpio_pull_up(PIN_SCL);
 
   ina219 ina;
-  ina = _ina_init(&ina, 0x40, 0.15, 4.2, 3.2, 0.1);
+  ina = _ina_init(&ina, 0x40, 3.2, \
+                4.2, 3.2, 0.1, 3221);
 
-  ina = configuration(&ina);
+  ina = configuration(&ina, false, \
+                      RESET_SYSTEM, RANGE_16V, \
+                      GAIN_8_320MV, ADC_128SAMP, 
+                      ADC_128SAMP, __CONT_SH_BUS);
  
   while(true){
 
      printf("\nMonitor voltage and current on battary\n");
-    // printf("Callibration register: %d, Config regist: %d \n\n", read_register(ina._i2c_addr, __REG_CALIBRATION), read_register(ina._i2c_addr, __REG_CONFIG));
+     printf("Callibration register: %d, Config regist: %d \n\n", read_register(ina._i2c_addr, __REG_CALIBRATION), read_register(ina._i2c_addr, __REG_CONFIG));
 
     float voltage_value = get_voltage(&ina);
     float current_value = get_current_mA(&ina);
-    float power_value = get_power(&ina);
+    float power_value = get_power_mW(&ina);
+    float current_value_from_shunt = get_current_from_shunt(&ina);
   //  printf("current_lsb: %f\n", ina->shunt_resistor_ohms);
 
     
 
-    printf("Voltage: %f V\nCurrent: %f mA\nPower: %f W\n",
-    voltage_value, current_value, power_value);
+    printf("Voltage: %f V\nCurrent: %f mA\nPower: %f mW\nCurrent from shunt: %f mA\n",
+    voltage_value, current_value, power_value, current_value_from_shunt);
 
      sleep_ms(2000);
    }  
