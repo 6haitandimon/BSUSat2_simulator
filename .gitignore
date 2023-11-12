@@ -56,4 +56,4 @@ build/
 *cmake
 
 .DS_Store
-main.c
+main.*
