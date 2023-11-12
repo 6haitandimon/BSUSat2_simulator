@@ -1,22 +1,17 @@
 #include "ina219.h"
 
-
-
-bool reservedAdress(uint8_t addr){
-  return(addr & 0x78) == 0 || (addr & 0x78) == 0x78;
-}
-
 uint16_t read_register(uint8_t addr, uint8_t register_address){
   uint8_t buf[3];
-  buf[0] = 0;
-  buf[1] = 0;
   int ret;
+
   ret = i2c_write_blocking(i2c0, addr, &register_address, 1, true);
   if(ret < 0)
     printf("Error write register\n");
+
   ret = i2c_read_blocking(i2c0, addr, buf, 2, false);
   if(ret < 0)
     printf("\nFailed to read register value\n");
+
   return (buf[0] << 8) | buf[1];
 }
 
@@ -34,41 +29,37 @@ void write_register(uint8_t addr, uint8_t register_address, ByByte register_valu
 float get_voltage(ina219 *ina){
   uint16_t value = read_register(ina->_i2c_addr, __REG_BUSVOLTAGE);
 
-  return (float)(value >> 3) * 4 / 1000.0;
+  return (float)(value >> 3) * __BUS_MILLIVOLTS_LSB / 1000.0;
+}
+
+float get_current(ina219 *ina){
+	uint16_t value = read_register(ina->_i2c_addr, __REG_CURRENT);
+	
+	return((float)value / 1000.0);
+
 }
 
 float get_current_mA(ina219 *ina){
 	uint16_t value = read_register(ina->_i2c_addr, __REG_CURRENT);
 	
-	return((float)value * ina->_current_lsb);
+	return((float)value / 10.0);
 
 }
 
-ina219 configuration(ina219 *ina){
-	ina->_current_lsb = ina->_max_expected_amps / 32768;
-	//ceil((ina->_max_expected_amps / 32768) * 1e+4) / 1e+4
-	ina->_power_lsb = 20 * ina->_current_lsb;
-	ina->_calibration_value.byte = (0.04096 / (ina->_current_lsb * ina->_shunt_resistor_ohms));
-	ina->_calibration_value.byte = (ina->_calibration_value.byte << 1);
 
-	ByByte configuration;
-	configuration.byte = (RESET_SYSTEM) |  
-						(RANGE_16V << 13) | \
-                        (GAIN_2_80MV << 11) | \
-                        (ADC_128SAMP << 7) | \
-                        (ADC_128SAMP << 3) | \
-                        (__CONT_SH_BUS);
-	
-	printf("callibration value: %d\n", ina->_calibration_value.byte);
-
-
-	write_register(ina->_i2c_addr, __REG_CONFIG, configuration);
-	write_register(ina->_i2c_addr, __REG_CALIBRATION, ina->_calibration_value);
-	
-	return *ina;
+float get_power_mW(ina219* ina){
+	uint16_t value = read_register(ina->_i2c_addr, __REG_POWER);
+	printf("power reg: %f\n, power_lsb: %f\n", (float)value, ina->_power_lsb);
+	return (float)(value * ina->_power_lsb * 1000.0);
 }
 
-float get_current_from_shunt(ina219 *ina){
+float get_power(ina219* ina){
+	uint16_t value = read_register(ina->_i2c_addr, __REG_POWER);
+	printf("power reg: %f\n, power_lsb: %f\n", (float)value, ina->_power_lsb);
+	return (float)(value * ina->_power_lsb);
+}
+
+float get_current_from_shunt_in_mA(ina219 *ina){
 	float value = (get_shunt_voltage_in_mV(ina) / 10);
 
 	return (value / ina->_shunt_resistor_ohms);
@@ -83,60 +74,43 @@ float get_shunt_voltage_in_mV(ina219* ina){
 	return ((float)value * 0.01);
 }
 
-float get_power(ina219* ina){
-	uint16_t value = read_register(ina->_i2c_addr, __REG_POWER);
-	
-	return ((float)value * ina->_power_lsb) * 10.0;
-}
 
-float calculate_power(ina219* ina){
-	float value = (get_current_from_shunt(ina) * get_voltage(ina));
-
-	return(value / 1000000.0);
-}
-
-ina219 _ina_init(ina219* ina, int8_t addr, float max_expected_amps, float batt_full, float batt_low, float shunt_resistor_ohms){
+ina219 _ina_init(ina219* ina, int8_t addr, float max_expected_amps, float batt_full, float batt_low, float shunt_resistor_ohms, uint16_t calibration_value){
 	ina->_i2c_addr = addr;
 	ina->_max_expected_amps = max_expected_amps;
   	ina->_batt_full = batt_full;
   	ina->_batt_low = batt_low;
   	ina->_shunt_resistor_ohms = shunt_resistor_ohms;
-  	ina->_power_lsb = 0;
-  	ina->_current_lsb = 0;
-  	ina->_calibration_value.byte = 0;
+  	ina->_current_lsb = (__CALIBRATION_FACTOR / calibration_value) / shunt_resistor_ohms;
+  	ina->_power_lsb = 20 * ina->_current_lsb;
+  	ina->_calibration_value.byte = calibration_value;
+	*ina = configuration(ina, false, NO_RESET_SYSTEM, RANGE_32V, GAIN_8_320MV, ADC_12BIT, ADC_12BIT, __CONT_SH_BUS);
 
 	return *ina;
 }
 
+ina219 configuration(ina219 *ina, bool flag_calibration, uint8_t RESET, uint8_t RANGE, uint8_t GAIN, uint8_t BADC, uint8_t CADC, uint8_t MODE){
+	ina->_configuration.byte = (RESET << 15) |  
+							(RANGE << 13) | \
+							(GAIN << 11) | \
+							(BADC << 7) | \
+							(CADC << 3) | \
+							(MODE);
 
-// void calibrate(int bus_volts_max, float shunt_volts_max, float max_expected_amps, uint8_t addr)
-// {
-// 	float max_possible_amps = shunt_volts_max / _shunt_ohms;
-// 	_current_lsb = determine_current_lsb(max_expected_amps, max_possible_amps);
-// 	_power_lsb = _current_lsb * 20.0;
-// 	uint16_t calibration = (uint16_t) trunc(__CALIBRATION_FACTOR / (_current_lsb * _shunt_ohms));
-// 	write_register(addr, __REG_CALIBRATION, calibration);
-// }
+	write_register(ina->_i2c_addr, __REG_CONFIG, ina->_configuration);
+	if(flag_calibration){
+		*ina = calibration(ina);
+	}else{
+		write_register(ina->_i2c_addr, __REG_CALIBRATION, ina->_calibration_value);
+	}
+	return *ina;
+}
 
-// float determine_current_lsb(float max_expected_amps, float max_possible_amps)
-// {
-// 	float current_lsb;
+ina219 calibration(ina219* ina){
+	ina->_current_lsb = ina->_max_expected_amps / __CURRENT_LSB_FACTOR;
+  	ina->_power_lsb = 20 * ina->_current_lsb;
+  	ina->_calibration_value.byte = (uint16_t)__CALIBRATION_FACTOR / (ina->_current_lsb * ina->_shunt_resistor_ohms);
 
-// 	float nearest = roundf(max_possible_amps * 1000.0) / 1000.0;
-// 	if (max_expected_amps > nearest) {
-// 		char buffer[65];
-// 		sprintf(buffer, "Expected current %f A is greater than max possible current %f A", max_expected_amps, max_possible_amps);
-// 		perror(buffer);
-// 	}
-
-// 	if (max_expected_amps < max_possible_amps) {
-// 		current_lsb = max_expected_amps / __CURRENT_LSB_FACTOR;
-// 	} else {
-// 		current_lsb = max_possible_amps / __CURRENT_LSB_FACTOR;
-// 	}
-	
-// 	if (current_lsb < _min_device_current_lsb) {
-// 		current_lsb = _min_device_current_lsb;
-// 	}
-// 	return current_lsb;
-// }
+	write_register(ina->_i2c_addr, __REG_CALIBRATION, ina->_calibration_value);
+	return *ina;
+}

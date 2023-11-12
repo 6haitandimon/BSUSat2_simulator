@@ -54,3 +54,6 @@ dkms.conf
 #Cmake files
 build/
 *cmake
+
+.DS_Store
+main.c
