@@ -48,11 +48,11 @@ def getPosData(gps_module):
                 latitude = convertToDegree(parts[2])
                 # parts[3] contain 'N' or 'S'
                 if (parts[3] == 'S'):
-                    latitude = -latitude
+                    latitude = latitude[::-1]
                 longitude = convertToDegree(parts[4])
                 # parts[5] contain 'E' or 'W'
                 if (parts[5] == 'W'):
-                    longitude = -longitude
+                    longitude = longitude[::-1]
                 satellites = parts[7]
                 gpsTime = parts[1][0:2] + ":" + parts[1][2:4] + ":" + parts[1][4:6]
                 FIX_STATUS = True
