@@ -1,4 +1,4 @@
-#include "ina219.h"
+#include "headers/ina219.h"
 
 uint16_t read_register(uint8_t addr, uint8_t register_address){
   uint8_t buf[3];

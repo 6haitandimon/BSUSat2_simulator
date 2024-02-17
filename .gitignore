@@ -53,7 +53,7 @@ dkms.conf
 
 #Cmake files
 build/
-*cmake
+# *cmake
 
 .DS_Store
 main.*

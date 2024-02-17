@@ -1,4 +1,4 @@
-#include "ina3221.h"
+#include "headers/ina3221.h"
 
 
 
