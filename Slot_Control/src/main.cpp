@@ -23,6 +23,7 @@ union floatByte{
     };
 };
 
+float convertionFactor = 3.009 / (4095.0) * (5.0 / 3.0);
 uint8_t ram_addr;
 uint8_t ram[256];
 
@@ -90,16 +91,41 @@ uint16_t adc_config_and_read_u16(uint32_t channel) {
     return raw << (16 - bits) | raw >> (2 * bits - 16);
 }
 
+float ADCRead(uint32_t channel){
+    float value = (adc_config_and_read_u16(channel) >> 4) * convertionFactor;
+    return value;
+}
+
+
+
 
 int main(){
     stdio_init_all();
+
     ADCInit();
     I2CInit();
 
-
     while(true){
-        tight_loop_contents();
+        printf("Vusb: %f, VBus: %f, VSolarBus: %f\n\n",  ADCRead(2), ADCRead(1), ADCRead(0));
+
+        sleep_ms(2000);
     }
 
     return 0;
 }
+
+//ADC channel 0 GP26 VSolarBus
+//ADC channel 1 GP27 VBus
+//ADC channel 2 GP28 VUsb
+
+// #Slots
+// #1-Radio1
+// #2-Battery1 state ON after Rbf remove
+// #3-Reserve
+// #4-Camera
+// #5-GPS
+// #6-Reserve
+// #7-Battery2 state ON after Rbf remove
+// #8-Coils
+// #9-Radio2
+// #10-SolarSensors
