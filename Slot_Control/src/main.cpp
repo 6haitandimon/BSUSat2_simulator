@@ -2,6 +2,7 @@
 #include "hardware/i2c.h"
 #include "hardware/adc.h"
 #include "PCA9554.h"
+#include "stdlib.h"
 
 #define SCL 21
 #define SDA 20
@@ -11,6 +12,16 @@
 
 #define I2C0_SLAVE_ADDR 0x41
 
+union floatByte{
+    float data;
+    struct
+    {
+        uint8_t byte1;
+        uint8_t byte2;
+        uint8_t byte3;
+        uint8_t byte4;
+    };
+};
 
 uint8_t ram_addr;
 uint8_t ram[256];
@@ -37,8 +48,18 @@ void i2c1_irq_handler() {
     }
 }
 
+uint16_t adc_config_and_read_u16(uint32_t channel) {
+    adc_select_input(channel);
+    uint32_t raw = adc_read();
+    const uint32_t bits = 12;
+
+    return raw << (16 - bits) | raw >> (2 * bits - 16);
+}
+
 int main(){
     stdio_init_all();
+
+    adc_init();
 
     i2c_init(i2c0, 400000);
     i2c_init(i2c1, 400000);
