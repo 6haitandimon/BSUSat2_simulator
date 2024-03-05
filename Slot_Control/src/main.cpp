@@ -48,19 +48,15 @@ void i2c1_irq_handler() {
     }
 }
 
-uint16_t adc_config_and_read_u16(uint32_t channel) {
-    adc_select_input(channel);
-    uint32_t raw = adc_read();
-    const uint32_t bits = 12;
-
-    return raw << (16 - bits) | raw >> (2 * bits - 16);
+void ADCInit(){
+    adc_init();
+    adc_gpio_init(28); //bat
+    adc_gpio_init(27); //usb
+    adc_gpio_init(26); //solar
+    return;
 }
 
-int main(){
-    stdio_init_all();
-
-    adc_init();
-
+void I2CInit(){
     i2c_init(i2c0, 400000);
     i2c_init(i2c1, 400000);
 
@@ -83,8 +79,23 @@ int main(){
     irq_set_exclusive_handler(I2C1_IRQ, i2c1_irq_handler);
     
     irq_set_enabled(I2C1_IRQ, true);
+    return;
+}
 
-    
+uint16_t adc_config_and_read_u16(uint32_t channel) {
+    adc_select_input(channel);
+    uint32_t raw = adc_read();
+    const uint32_t bits = 12;
+
+    return raw << (16 - bits) | raw >> (2 * bits - 16);
+}
+
+
+int main(){
+    stdio_init_all();
+    ADCInit();
+    I2CInit();
+
 
     while(true){
         tight_loop_contents();
