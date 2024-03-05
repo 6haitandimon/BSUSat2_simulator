@@ -28,13 +28,14 @@ else()
 endif()
 
 # target_include_directories(Slot_control PUBLIC PCA9554/)
-pico_enable_stdio_usb(Slot_control 1)
-pico_add_extra_outputs(Slot_control)
+# pico_enable_stdio_usb(Slot_control 1)
+# pico_add_extra_outputs(Slot_control)
 
 
 target_link_libraries(Slot_control
   pico_stdlib
   hardware_i2c
+  hardware_adc
 )
 
 
