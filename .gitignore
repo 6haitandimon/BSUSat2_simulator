@@ -50,3 +50,11 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+Solar_Sensors/cmake-build-debug-steeng/
+
+Solar_Sensors/.idea/
+
+Solar_Sensors/.DS_Store
+
+.DS_Store
