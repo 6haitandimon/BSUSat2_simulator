@@ -9,21 +9,21 @@ from umsgpack import dumps
 
 def decode_radio_message(encoded_data) -> list:
     return HDLCEncoder.decode(
-        LFSRScrambler.decode(
-            NRZIEncoder.decode(
-                encoded_data
+                LFSRScrambler.decode(
+                    NRZIEncoder.decode(
+                        encoded_data
+                    )
+                )
             )
-        )
-    )
 
 
 def encode_radio_message(data) -> list:
     crc_bytes = calculate_crc(data)
     data.extend(crc_bytes)
     return NRZIEncoder.encode(
-        LFSRScrambler.encode(
-            HDLCEncoder.encode(
-                data
+                LFSRScrambler.encode(
+                    HDLCEncoder.encode(
+                        data
+                    )
+                )
             )
-        )
-    )

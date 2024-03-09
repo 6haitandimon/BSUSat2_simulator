@@ -31,6 +31,7 @@ class BrokenAX25AddressFieldException(Exception):
 
 
 class AX25Address:
+
     call_sign: str = ""
     flags: int = 0
 
@@ -92,8 +93,8 @@ class AX25Packet:
 
         address_chunk = data[:addr_end]
 
-        dst_addr = AX25Address.parse(address_chunk[0: AX25_ADDR_LEN])
-        src_addr = AX25Address.parse(address_chunk[AX25_ADDR_LEN: addr_end])
+        dst_addr = AX25Address.parse(address_chunk[0 : AX25_ADDR_LEN])
+        src_addr = AX25Address.parse(address_chunk[AX25_ADDR_LEN : addr_end])
 
         flags_end = addr_end + 2
 
@@ -123,8 +124,7 @@ class AX25Packet:
 
 def create_AX25_address(cs_str, ssid, is_command):
     if len(cs_str) > AX25_CALL_SIGN_LEN:
-        raise BadAX25AddressLengthException(
-            f"Wrong AX25 Address len : {len(cs_str)}, expected {AX25_CALL_SIGN_LEN} or less")
+        raise BadAX25AddressLengthException(f"Wrong AX25 Address len : {len(cs_str)}, expected {AX25_CALL_SIGN_LEN} or less")
     while not len(cs_str) == AX25_CALL_SIGN_LEN:
         cs_str += " "
     call_sign = cs_str

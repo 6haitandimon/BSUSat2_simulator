@@ -1,14 +1,11 @@
 UINT8_MAX = 256
 UINT32_MAX = 4_294_967_296
 
-
 def to_uint8(val):
     return val % UINT8_MAX
 
-
 def to_uint32(val):
     return val % UINT32_MAX
-
 
 class LFSRScrambler():
     @staticmethod
@@ -35,6 +32,7 @@ class LFSRScrambler():
         return res
 
 
+
 # def _show(msg):
 #     scrm = g3ruh_scramble(msg)
 #     descrm = g3ruh_descramble(scrm)
@@ -53,13 +51,11 @@ def test_scrambler():
     print(encoded_data)
     decoded_data = LFSRScrambler.decode(encoded_data)
     print(decoded_data)
-    print("Test passed" if init_data == decoded_data else "Test failed")
+    print("Test passed" if init_data==decoded_data else "Test failed")
     # test_msg = list()
     # test_msg[:0] = '10110101011111010111101011110000111110101110001101011'
     # print(len(test_msg))
 
     # print(test_msg)
-
-
 if __name__ == "__main__":
     test_scrambler()

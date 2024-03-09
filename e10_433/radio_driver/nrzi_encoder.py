@@ -1,7 +1,7 @@
 NRZI_ENCODE_TABLE = [0xa, 0xb, 0x9, 0x8, 0xd, 0xc, 0xe, 0xf, 0x5, 0x4, 0x6, 0x7, 0x2, 0x3, 0x1, 0x0]
 
 
-def hex_to_bin(hl: list) -> str:
+def hex_to_bin(hl : list) -> str:
     bin_conv = list()
     for hex_val in hl:
         binary = bin(hex_val)[2:].zfill(8)[::1]
@@ -57,14 +57,13 @@ class NRZIEncoder():
             res.append(decoded_val)
         return res
 
-
 if __name__ == "__main__":
     test_msg = [0, 1, 2, 3, 0xff, 0xfe, 17, 19]
     print(test_msg)
     nrzi_applied = NRZIEncoder.encode(test_msg)
     decoded_message = NRZIEncoder.decode(nrzi_applied)
     print(decoded_message)
-    print("Test passed" if decoded_message == test_msg else "Test failed")
+    print("Test passed" if decoded_message==test_msg else "Test failed")
     # convereted_int_resp = int.from_bytes(test, byteorder="little")
     # if convereted_int_resp & 0x1000000:
     #     print("Yolo")
@@ -78,3 +77,5 @@ if __name__ == "__main__":
     #     else:
     #         one_counter += 1
     # print(f"zero_counter : {zero_counter} and one_counter : {one_counter}")
+
+

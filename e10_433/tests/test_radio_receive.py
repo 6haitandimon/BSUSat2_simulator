@@ -4,10 +4,10 @@ from radio_driver.radio_controller import RadioController
 def test_radio_receive():
     controller = RadioController()
 
-    if controller.initialize():
+    if not controller.initialize():
         print("Test radio receive: failed to init controller")
         return
 
-    if controller.start_rx():
+    if not controller.start_rx():
         print(print("Test radio receive: failed to start rx"))
         return

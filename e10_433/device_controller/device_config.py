@@ -96,8 +96,8 @@ class DeviceConfig:
     param_1 = const(2)
     param_3 = const(3)
     state = tuple()
-    RADIO_MODULE_DEFAULT_AX25_ADDRESS = "PICOS"
-    STATION_EMITATOR_DEFAULT_ADDRESS = "PICORW"
+    RADIO_MODULE_DEFAULT_AX25_ADDRESS = "BSAT-"
+    STATION_EMITATOR_DEFAULT_ADDRESS = "BSUGS"
     INTERNAL_SLOT_ADDRESS = 0x01
     INTERNAL_RADIO_AVAILABLE = const(0x1)
 
@@ -114,3 +114,5 @@ class DeviceConfig:
     #         return 0
     #     except FileNotFoundError:
     #         print("No such configuration file")
+
+
