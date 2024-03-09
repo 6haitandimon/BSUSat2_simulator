@@ -10,7 +10,7 @@
 #define SCL_slave 7
 #define SDA_slave 6
 
-#define I2C0_SLAVE_ADDR 0x41
+#define I2C1_SLAVE_ADDR 0x41
 
 union floatByte{
     float data;
@@ -27,7 +27,23 @@ float convertionFactor = 3.009 / (4095.0) * (5.0 / 3.0);
 uint8_t ram_addr;
 uint8_t ram[256];
 
+floatByte dataADC[4];
+
+void updateRam(){
+    uint8_t ramCounter = 0;
+    while(ramCounter < 3){
+        uint8_t byteCounter = ramCounter * 4;
+        ram[byteCounter++] = dataADC[ramCounter].byte1;
+        ram[byteCounter++] = dataADC[ramCounter].byte2;
+        ram[byteCounter++] = dataADC[ramCounter].byte3;
+        ram[byteCounter] = dataADC[ramCounter++].byte4;
+    }
+    return;
+}
+
 void i2c1_irq_handler() {
+    updateRam();
+    printf("IRQ\n");
     uint32_t status = i2c1_hw->intr_stat;
     uint32_t value;
 
@@ -61,7 +77,7 @@ void I2CInit(){
     i2c_init(i2c0, 400000);
     i2c_init(i2c1, 400000);
 
-    i2c_set_slave_mode(i2c1, true, I2C0_SLAVE_ADDR);
+    i2c_set_slave_mode(i2c1, true, I2C1_SLAVE_ADDR);
   
     gpio_set_function(SDA, GPIO_FUNC_I2C);
     gpio_set_function(SCL, GPIO_FUNC_I2C);
@@ -105,10 +121,16 @@ int main(){
     ADCInit();
     I2CInit();
 
-    while(true){
-        printf("Vusb: %f, VBus: %f, VSolarBus: %f\n\n",  ADCRead(2), ADCRead(1), ADCRead(0));
+    PCA9554 pca(0, 21, 20, 0x3F, 0x49);
+    pca.slotAdd(9, 0x80);
 
-        sleep_ms(2000);
+    pca.enableSlot(9);
+
+    while(true){
+        // printf("Vusb: %f, VBus: %f, VSolarBus: %f\n\n",  ADCRead(2), ADCRead(1), ADCRead(0));
+        dataADC[2].data = ADCRead(0);
+        dataADC[1].data = ADCRead(1);
+        dataADC[0].data = ADCRead(2);
     }
 
     return 0;
