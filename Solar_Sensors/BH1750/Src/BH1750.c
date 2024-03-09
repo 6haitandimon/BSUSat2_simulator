@@ -12,14 +12,14 @@
  * @param [in] ADDR_GND ADDR подключен на землю или нет
  * @return Возвращает инициализированный Обьект сенсора BH1750_t
  */
-BH1750_t BH1750_Init(i2c_handleTypeDef* i2c_handle,bool ADDR_GND){
+ BH1750_t BH1750_Init(sw_i2cT* i2c_handle,bool ADDR_GND){
     BH1750_t obj;
 
     obj.address_RD = ADDR_GND ? GND_ADDR_RD : NO_GND_ADDR_RD;
     obj.address_WR = ADDR_GND ? GND_ADDR_WR : NO_GND_ADDR_WR;
     obj.i2c_handle = i2c_handle;
 
-    obj.status = BH1750_ON(&obj); //включаем его
+    obj.status = BH1750_ON(&obj);
     return obj;
 }
 /**
@@ -82,7 +82,7 @@ StatusTypeDef BH1750_ON(const BH1750_t *obj){
     *How to calculate when the data High Byte is "00000001" and Low Byte is "00010000" (28+24 )/1.2 = 227[lx]
     * */
 float BH1750_get_value(BH1750_t* obj){
-    BH1750_RD(obj);
+    obj->status = BH1750_RD(obj);
 
     obj->value =  ( (obj->buffer[0] << 8) | obj->buffer[1]) / 1.2f ;
 

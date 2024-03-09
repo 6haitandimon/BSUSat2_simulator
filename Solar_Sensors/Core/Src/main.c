@@ -1,10 +1,12 @@
 
-#include "../Inc/main.h"
-#include "../Inc/dma.h"
-#include "../Inc/i2c.h"
-#include "../Inc/tim.h"
-#include "../Inc/gpio.h"
-#include "soft_i2c.h"
+#include "main.h"
+#include "dma.h"
+#include "i2c.h"
+#include "tim.h"
+#include "gpio.h"
+
+#include "BH1750.h"
+#include "software_i2c.h"
 
 void SystemClock_Config(void);
 
@@ -16,13 +18,15 @@ int main(void)
   MX_DMA_Init();
   MX_I2C1_Init();
   MX_TIM3_Init();
-  I2C_Init(GPIOA,GPIO_PIN_1,GPIOA,GPIO_PIN_0);
-  uint8_t buf[1] = {3};
-  while (1)
-  {
-      I2C_Write(0x23,buf,1,10);
-      HAL_Delay(200);
 
+  sw_i2cT hi2c = SW_I2C_INIT(GPIOA,GPIO_PIN_1,GPIOA,GPIO_PIN_0);
+  BH1750_t obj = BH1750_Init(&hi2c,true); //generate object
+  uint8_t tmp;
+
+  while (1){
+
+      tmp = BH1750_get_value(&obj);
+      HAL_Delay(200);
   }
 }
 
@@ -73,18 +77,4 @@ void Error_Handler(void)
 }
 
 #ifdef  USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
-}
 #endif /* USE_FULL_ASSERT */

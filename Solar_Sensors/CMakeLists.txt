@@ -59,15 +59,17 @@ include_directories(Core/Inc Drivers/STM32F0xx_HAL_Driver/Inc Drivers/STM32F0xx_
         Leads/Inc
         Leads/config
         soft_i2c/Inc
-        #BH1750/Inc
+        soft_i2c/configs/Inc
+        BH1750/Inc
 )
 
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F030x6)
 
 file(GLOB_RECURSE SOURCES "Core/*.*" "Drivers/*.*"
         Leads/Src/*.*
-        soft_i2c/Src/*.*
-        #BH1750/Src/*.*
+        soft_i2c/Src/software_i2c.c
+        soft_i2c/configs/Src/*.*
+        BH1750/Src/*.*
 )
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F030F4PX_FLASH.ld)

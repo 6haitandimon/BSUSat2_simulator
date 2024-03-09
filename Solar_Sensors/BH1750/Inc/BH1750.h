@@ -43,7 +43,6 @@ enum Commands{
 /**
  *
  * @struct BH1750
- * @typedef BH1750_t
  * @brief Структура, представляющая сенсор
  * @param I2C_HandleTypeDef Handler I2C для связи с сенсором на шине
  * @param address_RD Адрес чтения с датчика.
@@ -52,7 +51,7 @@ enum Commands{
  * @param buffer Буфер для хранения данных при общении с сенсором
  */
 typedef struct BH1750 {
-    i2c_handleTypeDef* i2c_handle;
+    sw_i2c_t * i2c_handle;
     StatusTypeDef status;
     uint8_t address_RD;
     uint8_t address_WR;
@@ -60,7 +59,7 @@ typedef struct BH1750 {
     float value;
 }BH1750_t;
 
-BH1750_t BH1750_Init(i2c_handleTypeDef* i2c_handle,bool ADDR_GND);
+BH1750_t BH1750_Init(sw_i2cT* i2c_handle,bool ADDR_GND);
 StatusTypeDef ChechStatus(const BH1750_t * obj);
 StatusTypeDef BH1750_ON(const BH1750_t * obj);
 StatusTypeDef BH1750_WR(const BH1750_t * obj,uint8_t cmd);
