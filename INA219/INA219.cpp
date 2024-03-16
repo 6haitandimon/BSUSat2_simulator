@@ -1,5 +1,7 @@
 #include "ina219.h"
 
+namespace INA219{
+
 uint16_t read_register(uint8_t addr, uint8_t register_address){
   uint8_t buf[3];
   int ret;
@@ -113,4 +115,5 @@ ina219 calibration(ina219* ina){
 
 	write_register(ina->_i2c_addr, __REG_CALIBRATION, ina->_calibration_value);
 	return *ina;
+}
 }

@@ -1,0 +1,14 @@
+add_library(MCP2515 INTERFACE)
+
+target_include_directories(MCP2515 INTERFACE ./include)
+
+target_sources(MCP2515
+    INTERFACE
+    MCP2515.cpp
+)
+
+target_link_libraries(MCP2515 
+                INTERFACE
+                pico_stdlib
+                hardware_spi
+        )

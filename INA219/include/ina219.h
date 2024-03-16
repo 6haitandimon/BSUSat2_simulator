@@ -1,3 +1,21 @@
+#pragma ONCE
+
+#include "hardware/i2c.h"
+#include <math.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
+
+namespace INA219{
+
+typedef union ByByte_t{
+    uint16_t byte;
+    struct {
+        uint8_t l;
+        uint8_t d;
+    };
+} ByByte;
+
 //Range configuration
 #define RANGE_16V                           0 // Range 0-16 volts
 #define RANGE_32V                           1 // Range 0-32 volts
@@ -87,20 +105,6 @@
 // to guarantee that current overflow can always be detected.
 #define __CURRENT_LSB_FACTOR                32770.0
 
-
-#include "hardware/i2c.h"
-#include <math.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
-
-typedef union ByByte{
-    uint16_t byte;
-    struct {
-        uint8_t l;
-        uint8_t d;
-    };
-} ByByte;
 
 /**
  * @brief Structure for initializing and storing sensor 
@@ -264,4 +268,4 @@ float get_current_from_shunt_in_mA(ina219*);
 */
 float get_shunt_voltage_in_mV(ina219*);
 
-
+}

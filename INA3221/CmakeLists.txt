@@ -1,0 +1,14 @@
+add_library(INA3221 INTERFACE)
+
+target_include_directories(INA3221 INTERFACE ./include)
+
+target_sources(INA3221
+    INTERFACE
+    INA3221.cpp
+)
+
+target_link_libraries(INA3221
+                INTERFACE
+                pico_stdlib
+                hardware_i2c
+        )

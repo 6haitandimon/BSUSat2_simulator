@@ -1,3 +1,13 @@
+#pragma ONCE
+
+#include "hardware/i2c.h"
+#include <math.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
+
+namespace INA3221{
+
 #define RESET_SYSTEM                        1 // bit to reset system
 
 //Averaging mode. 
@@ -64,13 +74,9 @@
 
 
 
-#include "hardware/i2c.h"
-#include <math.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
 
-typedef union ByByte{
+
+typedef union ByByte_t{
     uint16_t byte;
     struct {
         uint8_t l;
@@ -104,4 +110,4 @@ float get_power(ina3221 *ina, uint8_t channel);
 // float get_current_from_shunt(ina3221*);
 float get_shunt_voltage(ina3221* ina, uint8_t channel);
 
-
+}
