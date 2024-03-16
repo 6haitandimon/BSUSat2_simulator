@@ -1,0 +1,40 @@
+cmake_minimum_required(VERSION 3.13)
+
+include(pico_sdk_import.cmake)
+project(CAN_driver C CXX ASM)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+
+pico_sdk_init()
+
+# include_directories(MCP2515/include)
+file(GLOB SRC_FILE ${PROJECT_SOURCE_DIR}/src/*.cpp)
+file(GLOB MCP2515_SRC_FILE ${PROJECT_SOURCE_DIR}/MCP2515/*.cpp)
+file(GLOB PCA9554_SRC_FILE ${PROJECT_SOURCE_DIR}/PCA9554/*.cpp)
+
+
+add_executable(CAN_driver
+        ${SRC_FILE}
+        # src/main.cpp
+        ${MCP2515_SRC_FILE}
+        # MCP2515/MCP2515.cpp
+        ${PCA9554_SRC_FILE}
+)
+
+target_include_directories(CAN_driver PUBLIC MCP2515/include)
+target_include_directories(CAN_driver PUBLIC PCA9554/include)
+
+target_link_libraries(CAN_driver
+  pico_stdlib
+  hardware_spi
+  hardware_i2c
+)
+
+
+# enable usb output, disable uart output
+pico_enable_stdio_usb(CAN_driver 1)
+pico_enable_stdio_uart(CAN_driver 0)
+
+
+pico_add_extra_outputs(CAN_driver)
