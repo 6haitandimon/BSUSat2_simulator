@@ -6,16 +6,6 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-namespace INA219{
-
-typedef union ByByte_t{
-    uint16_t byte;
-    struct {
-        uint8_t l;
-        uint8_t d;
-    };
-} ByByte;
-
 //Range configuration
 #define RANGE_16V                           0 // Range 0-16 volts
 #define RANGE_32V                           1 // Range 0-32 volts
@@ -107,35 +97,57 @@ typedef union ByByte_t{
 
 
 /**
- * @brief Structure for initializing and storing sensor 
- *        parameters in the controller memory
+ * @brief Class in the controller INA219
 */
 
-typedef struct ina219
-{
-    int8_t _i2c_addr;
-    float _max_expected_amps;
-    float _batt_low;
-    float _batt_full;
-    float _current_lsb;
-    float _power_lsb;
-    float _shunt_resistor_ohms;
-    ByByte _calibration_value;
+class INA219 {
+    private:
+    union ByByte{
+    uint16_t byte;
+    struct {
+        uint8_t l;
+        uint8_t d;
+        };
+    };
+
+    int8_t _i2cAddr;
+    float _maxExpectedAmps;
+    float _battLow;
+    float _battFull;
+    float _currentLsb;
+    float _powerLsb;
+    float _shuntResistorOhms;
+    ByByte _calibrationValue;
     ByByte _configuration;
-    
-} ina219;
 
+    uint16_t read_register(uint8_t registr);
+    void write_register(uint8_t register_address, INA219::ByByte register_value);
 
+    public:
+    /**
+ * @brief initialization function for ina219
+ * 
+ * @param addr - Sensor address ina219 on the bus i2c
+ *              __ADDRESS_0x40(default), __ADDRESS_0x41 and so on.
+ * 
+ * @param max_expected_amps - The maximum expected current in the circuit.
+                            (For proper calibration I recommend 3.2)
 
-uint16_t read_register(uint8_t, uint8_t);
-void write_register(uint8_t, uint8_t, ByByte);
+ * @param batt_full - Maximum battery voltage. 
+                    (If not used, set the parameter to 0)
 
-/**
+ * @param batt_low - Minimum battery voltage. 
+                    (If not used, set the parameter to 0)
+ 
+ * @param shunt_resistor_ohms - Shunt resistor resistance.
+
+ * @param calibration_value - The exact value of the calibration register.
+                            (If calibration has not been performed, set the value to 4096)
+*/
+    INA219(int8_t addr, float max_expected_amps, float batt_full, float batt_low, float shunt_resistor_ohms, uint16_t calibration_value);
+    /**
  * @brief Configures how the INA219 will take measurements
  * 
- * @param ina - This is a pointer to a structure 
-            that stores the main parameters of 
-            the chip in the controller memory
  * @param flag_calibration - Flag that indicates the need to call 
                             the calibration function of register 0x00
 
@@ -172,8 +184,7 @@ void write_register(uint8_t, uint8_t, ByByte);
                 __CONT_BUS (Bus voltage, continuous), __CONT_SH_BUS (Shunt and bus, continuous) (default)
 * @return Update struct ina219
 */
-ina219 configuration(ina219 *ina, bool flag_calibration, uint8_t RESET, uint8_t RANGE, uint8_t GAIN, uint8_t BADC, uint8_t CADC, uint8_t MODE);
-
+    void configuration(bool flag_calibration, uint8_t RESET, uint8_t RANGE, uint8_t GAIN, uint8_t BADC, uint8_t CADC, uint8_t MODE);
 /**
  * @brief Function for calibrating register 0x05 according 
  * to specified parameters into the initialization function. 
@@ -183,50 +194,21 @@ ina219 configuration(ina219 *ina, bool flag_calibration, uint8_t RESET, uint8_t 
  * @return Update struct ina219 
 
 */
-ina219 calibration(ina219 *);
-
-/**
- * @brief Structure initialization function for ina219
- * 
- * @param ina - Pointer to a structure for storing sensor parameters
- * 
- * @param addr - Sensor address ina219 on the bus i2c
- *              __ADDRESS_0x40(default), __ADDRESS_0x41 and so on.
- * 
- * @param max_expected_amps - The maximum expected current in the circuit.
-                            (For proper calibration I recommend 3.2)
-
- * @param batt_full - Maximum battery voltage. 
-                    (If not used, set the parameter to 0)
-
- * @param batt_low - Minimum battery voltage. 
-                    (If not used, set the parameter to 0)
- 
- * @param shunt_resistor_ohms - Shunt resistor resistance.
-
- * @param calibration_value - The exact value of the calibration register.
-                            (If calibration has not been performed, set the value to 4096)
- 
- * @return Update struct ina219
-*/
-ina219 _ina_init(ina219* ina, int8_t addr, float max_expected_amps, float batt_full, float batt_low, float shunt_resistor_ohms, uint16_t calibration_value);
-
-/**
+    void calibration();
+    /**
  * @brief Getting voltage in Volts
  * 
- * @param ina - Pointer to a structure with sensor parameters
- * 
- * @return
+ * @return Voltage value
 */
-float get_voltage(ina219 *);
-/**
+    float get_voltage();
+    /**
  * @brief Getting the current in miles Amperes
  * 
  * @param ina - Pointer to a structure with sensor parameters
  * 
  * @return Volt value (float)
 */
-float get_current_mA(ina219 *);
+    float get_current_mA();
 /**
  * @brief Getting the current in Amperes
  * 
@@ -234,7 +216,7 @@ float get_current_mA(ina219 *);
  * 
  * @return Current value in Amperes (float)
 */
-float get_current(ina219 *);
+    float get_current();
 /**
  * @brief Getting the power in miles Wattah
  * 
@@ -242,7 +224,7 @@ float get_current(ina219 *);
  * 
  * @return Power value in miles Wattah (float)
 */
-float get_power_mW(ina219* );
+    float get_power_mW();
 /**
  * @brief Getting the power in Wattah
  * 
@@ -250,7 +232,7 @@ float get_power_mW(ina219* );
  * 
  * @return Power value in Wattah (float)
 */
-float get_power(ina219* );
+    float get_power();
 /**
  * @brief Obtaining the power of the current on the shunt in miles Amperes
  * 
@@ -258,7 +240,7 @@ float get_power(ina219* );
  * 
  * @return Shunt current value in miles Amperes (float)
 */
-float get_current_from_shunt_in_mA(ina219*);
+    float get_current_from_shunt_in_mA();
 /**
  * @brief Obtaining the shunt voltage in miles Volts
  * 
@@ -266,6 +248,5 @@ float get_current_from_shunt_in_mA(ina219*);
  * 
  * @return Shunt voltage value in miles Volts (float)
 */
-float get_shunt_voltage_in_mV(ina219*);
-
-}
+    float get_shunt_voltage_in_mV();
+};
