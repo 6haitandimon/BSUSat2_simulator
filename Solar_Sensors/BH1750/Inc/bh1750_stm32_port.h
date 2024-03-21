@@ -16,8 +16,8 @@ typedef enum
 
 
 HAL_StatusTypeDef I2C_IsDeviceReady(sw_i2c_t *hi2c, uint16_t DevAddress, uint8_t Trials,uint32_t Timeout);
-HAL_StatusTypeDef I2C_Master_Transmit(sw_i2c_t *hi2c, uint16_t DevAddress, uint8_t *pData,uint16_t Size, uint32_t Timeout);
-HAL_StatusTypeDef I2C_Master_Receive(sw_i2c_t *hi2c, uint16_t DevAddress, uint8_t *pData,uint16_t Size, uint32_t Timeout);
+HAL_StatusTypeDef I2C_Master_Transmit(sw_i2c_t *hi2c, uint16_t DevAddress, uint16_t *pData,uint16_t Size, uint32_t Timeout);
+HAL_StatusTypeDef I2C_Master_Receive(sw_i2c_t *hi2c, uint16_t DevAddress, uint16_t *pData,uint16_t Size, uint32_t Timeout);
 void _delay(uint32_t __ms);
 
 

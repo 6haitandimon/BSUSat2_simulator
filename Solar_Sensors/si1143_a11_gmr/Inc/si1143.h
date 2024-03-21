@@ -96,15 +96,25 @@ enum RAM_PARAMETERS{
     ALS_IR_ADC_GAIN,
     ALS_IR_ADC_MISC,
 };
+typedef struct si1143Data{
+    u16 redLed;
+    u16 ir1Led;
+    u16 ir2Led;
+    u16 alsIR;
+    u16 alsVisible;
+}si1143Data_t;
+
 typedef struct si1143{
     sw_i2c_t * hi2c;
     u8 i2c_addres;
+    si1143Data_t data;
     ModeTypeDef mode;
     StatusTypeDef status;
 }si1143_t;
 
-
 si1143_t SI1143_Init(sw_i2c_t * hi2c);
 StatusTypeDef SI1143_ON(si1143_t * obj);
+StatusTypeDef writeInReg(si1143_t * obj,u16 * initCmd,u8 size);
+StatusTypeDef writeParam(si1143_t * obj,u16 * initCmd,u8 size);
 
 #endif //SI1143_H
