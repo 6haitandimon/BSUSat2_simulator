@@ -1,11 +1,12 @@
 #pragma ONCE
 
 #include "hardware/i2c.h"
+#include "pico/stdlib.h"
 #include <math.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
-
+namespace INA219{
 //Range configuration
 #define RANGE_16V                           0 // Range 0-16 volts
 #define RANGE_32V                           1 // Range 0-32 volts
@@ -109,8 +110,10 @@ class INA219 {
         uint8_t d;
         };
     };
-
-    int8_t _i2cAddr;
+    i2c_inst_t *i2c;
+    uint8_t SDA;
+    uint8_t SCL;
+    uint8_t _i2cAddr;
     float _maxExpectedAmps;
     float _battLow;
     float _battFull;
@@ -126,6 +129,13 @@ class INA219 {
     public:
     /**
  * @brief initialization function for ina219
+ * 
+ * @param i2c - pointer to initializer structure i2c
+ *              i2c0, i2c1;
+ * 
+ * @param SDA - SDA pin
+ * 
+ * @param SCL - SCL pin
  * 
  * @param addr - Sensor address ina219 on the bus i2c
  *              __ADDRESS_0x40(default), __ADDRESS_0x41 and so on.
@@ -144,7 +154,7 @@ class INA219 {
  * @param calibration_value - The exact value of the calibration register.
                             (If calibration has not been performed, set the value to 4096)
 */
-    INA219(int8_t addr, float max_expected_amps, float batt_full, float batt_low, float shunt_resistor_ohms, uint16_t calibration_value);
+    INA219(i2c_inst_t *i2c, uint8_t SDA, uint8_t SCL, uint8_t addr, float max_expected_amps, float batt_full, float batt_low, float shunt_resistor_ohms, uint16_t calibration_value);
     /**
  * @brief Configures how the INA219 will take measurements
  * 
@@ -250,3 +260,4 @@ class INA219 {
 */
     float get_shunt_voltage_in_mV();
 };
+}

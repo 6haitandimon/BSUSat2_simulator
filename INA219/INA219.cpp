@@ -1,6 +1,6 @@
 #include "ina219.h"
 
-
+namespace INA219{
 uint16_t INA219::read_register(uint8_t register_address){
   uint8_t buf[3];
   int ret;
@@ -75,7 +75,15 @@ float INA219::get_shunt_voltage_in_mV(){
 }
 
 
-INA219::INA219(int8_t addr, float max_expected_amps, float batt_full, float batt_low, float shunt_resistor_ohms, uint16_t calibration_value){
+INA219::INA219(i2c_inst_t *i2c, uint8_t SDA, uint8_t SCL, uint8_t addr, float max_expected_amps, float batt_full, float batt_low, float shunt_resistor_ohms, uint16_t calibration_value){
+	i2c_init(i2c, 400000);
+	gpio_set_function(SDA, GPIO_FUNC_I2C);
+    gpio_set_function(SCL, GPIO_FUNC_I2C);
+    gpio_pull_up(SCL);
+    gpio_pull_up(SDA);
+	this->i2c = i2c;
+	this->SDA = SDA;
+	this->SCL = SCL;
 	this->_i2cAddr = addr;
 	this->_maxExpectedAmps = max_expected_amps;
   	this->_battFull = batt_full;
@@ -110,4 +118,5 @@ void INA219::calibration(){
 
 	write_register(__REG_CALIBRATION, this->_calibrationValue);
 
+}
 }

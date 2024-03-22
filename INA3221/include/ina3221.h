@@ -1,6 +1,7 @@
 #pragma ONCE
 
 #include "hardware/i2c.h"
+#include "pico/stdlib.h"
 #include <math.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -74,40 +75,40 @@ namespace INA3221{
 
 
 
+class INA3221{
+    private:
+        union ByByte{
+        uint16_t byte;
+        struct {
+            uint8_t l;
+            uint8_t d;
+            };
+        };
 
+        i2c_inst_t *i2c;
+        uint8_t SDA; 
+        uint8_t SCL;
+        uint8_t _addr;
+        float _batt_low;
+        float _batt_full;
+        float _shunt_resistor_ohms;
 
-typedef union ByByte_t{
-    uint16_t byte;
-    struct {
-        uint8_t l;
-        uint8_t d;
+        uint16_t ReadRegister(uint8_t register_address);
+        void WriteRegister(uint8_t register_address, INA3221::ByByte register_value);
+
+    public:
+
+        INA3221(i2c_inst_t *i2c, uint8_t SDA, uint8_t SCL, uint8_t addr, float batt_full, float batt_low, float shunt_resistor_ohms);
+
+        void Configuration();
+
+        float GetVoltage(uint8_t channel);
+        float GetCurrent(uint8_t channel);
+        float GetPower(uint8_t channel);
+        float GetShuntVoltage(uint8_t channel);
+
     };
-} ByByte;
-
-typedef struct ina3221
-{
-    int8_t _i2c_addr;
-    float _batt_low;
-    float _batt_full;
-    float _shunt_resistor_ohms;
-    // ByByte _calibration_value;
-    
-} ina3221;
-
-
-
-bool reservedAdress(uint8_t);
-
-uint16_t read_register(uint8_t, uint8_t);
-void write_register(uint8_t, uint8_t, ByByte);
-
-ina3221 configuration(ina3221 *ina);
-ina3221 _ina_init(ina3221* ina, int8_t addr, float batt_full, float batt_low, float shunt_resistor_ohms);
-
-float get_voltage(ina3221 *ina, uint8_t channel);
-float get_current(ina3221 *ina, uint8_t channel);
-float get_power(ina3221 *ina, uint8_t channel);
-// float get_current_from_shunt(ina3221*);
-float get_shunt_voltage(ina3221* ina, uint8_t channel);
-
 }
+
+
+

@@ -4,10 +4,14 @@ PCA9554::PCA9554(uint8_t I2C_num, uint8_t SCL, uint8_t SDA, uint8_t address, uin
         I2C_num(I2C_num), SCL(SCL), 
         SDA(SDA), address(address), 
         config(config){
-            // gpio_set_function(SDA, GPIO_FUNC_I2C);
-            // gpio_set_function(SCL, GPIO_FUNC_I2C);
-            // gpio_pull_up(SCL);
-            // gpio_pull_up(SDA);
+            if(I2C_num == 0)
+                i2c_init(i2c0, 400000);
+            else
+            i2c_init(i2c1, 400000);
+            gpio_set_function(SDA, GPIO_FUNC_I2C);
+            gpio_set_function(SCL, GPIO_FUNC_I2C);
+            gpio_pull_up(SCL);
+            gpio_pull_up(SDA);
             
             write(PCA9554_REG_CONFIG, config);
         }
