@@ -15,8 +15,8 @@ si1143_t SI1143_Init(sw_i2cT *hi2c) {
 }
 
 StatusTypeDef SI1143_ON(si1143_t *obj) {
-    const u8 size = 2;
-    u16 initCmd[size]={};
+    u16 initCmd[2]={};
+
     //The system must write the value 0x17 to this register for proper Si114x operation.
     initCmd[0] = HW_KEY; initCmd[1] = 0x17;
     if( obj->status = writeInReg(obj, initCmd, 2) != OK ){ return obj->status; }
@@ -69,8 +69,8 @@ StatusTypeDef SI1143_ON(si1143_t *obj) {
     // 0x02: Visible Photodiode
     // 0x03: Large IR Photodiode
     // 0x06: No Photodiode
-    // 0x25: GND voltage ??????
-    // 0x65: Temperature ??????
+    // 0x25: GND voltage todo ??????
+    // 0x65: Temperature todo ??????
     initCmd[0] = PS1_ADCMUX; initCmd[1] = 0x03;
     if( obj->status = writeParam(obj, initCmd, 2) != OK ){ return obj->status; }
     initCmd[0] = PS2_ADCMUX; initCmd[1] = 0x03;
@@ -97,5 +97,50 @@ StatusTypeDef writeInReg(si1143_t *obj, u16 *initCmd, uint8_t size) {
 
 StatusTypeDef writeParam(si1143_t *obj, uint16_t *initCmd, uint8_t size) {
     u16 buffer[3]= {PARAM_WR, initCmd[1], 0xA0 | initCmd[0]}; // PARAM_SET 101aaaaa
-    return I2C_Master_Transmit(obj->hi2c,obj->i2c_addres,buffer, size + 1 ,10); // todo size
+    return obj->status = I2C_Master_Transmit(obj->hi2c,obj->i2c_addres,buffer, size + 1 ,10); // todo size
+}
+/**
+ *
+ * @param obj
+ * @param type  = 1 LED DATA
+ * @return
+ */
+StatusTypeDef readSensor(si1143_t *obj, u8 type) {
+    u16 pData[3];
+    if(type && 0x01) {
+        if( obj->status = I2C_Master_Transmit(obj->hi2c, I2C_ADDR, (uint16_t *) PS1_DATA0, 1, 10) != OK){ return obj->status; }
+        if(obj->status = getLedData(obj, pData)){ return obj->status; }
+        obj->data.redLed += pData[0];
+        obj->data.ir1Led += pData[1];
+        obj->data.ir2Led += pData[2];
+    }
+    if(type && 0x02){
+        if( obj->status = I2C_Master_Transmit(obj->hi2c, I2C_ADDR, (uint16_t *) ALS_VIS_DATA0, 1, 10) != OK){ return obj->status; }
+        if(obj->status = getAlsData(obj, pData)){ return obj->status; }
+        obj->data.alsVisible += pData[0];
+        obj->data.alsIR += pData[1];
+    }
+    return OK;
+}
+
+StatusTypeDef getLedData(si1143_t *obj, u16 *pData) {
+    u16 tempData[2]={};
+    for(u8 i = 0 ; i < 3; i++){
+        if( obj->status = I2C_Master_Receive(obj->hi2c, I2C_ADDR, tempData, 2, 10) != OK)
+            return obj->status;
+        pData[i] = tempData[0] + (tempData[1] << 8);
+        tempData[0] = 0; tempData[1] = 0; //todo: del
+    }
+    return OK;
+}
+
+StatusTypeDef getAlsData(si1143_t *obj, uint16_t *pData) {
+    u16 tempData[2]={};
+    for(u8 i = 0 ; i < 2 ;i++){
+        if( obj->status = I2C_Master_Receive(obj->hi2c, I2C_ADDR, tempData, 2, 10) != OK)
+            return obj->status;
+        pData[i] = tempData[0] + (tempData[1] << 8);
+        tempData[0] = 0; tempData[1] = 0; //todo: del?
+    }
+    return OK;
 }

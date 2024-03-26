@@ -116,5 +116,8 @@ si1143_t SI1143_Init(sw_i2c_t * hi2c);
 StatusTypeDef SI1143_ON(si1143_t * obj);
 StatusTypeDef writeInReg(si1143_t * obj,u16 * initCmd,u8 size);
 StatusTypeDef writeParam(si1143_t * obj,u16 * initCmd,u8 size);
+StatusTypeDef readSensor(si1143_t * obj, u8 type);
 
+StatusTypeDef getLedData(si1143_t * obj,u16 * pData);
+StatusTypeDef getAlsData(si1143_t * obj,u16 * pData);
 #endif //SI1143_H
