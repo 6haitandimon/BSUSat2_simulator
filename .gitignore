@@ -65,3 +65,5 @@ build/
 # Idea
 /.idea
 CAN_driver/.vscode/
+
+cmake-build-debug/

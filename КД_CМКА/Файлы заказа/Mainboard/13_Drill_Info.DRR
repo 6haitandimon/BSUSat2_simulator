@@ -1,0 +1,19 @@
+----------------------------------------------------------------------------------------------------------------------------------
+NCDrill File Report For: PCB_MainBoard v1.PcbDoc   12/13/2022  3:11:57 PM
+----------------------------------------------------------------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : PCB_MainBoard v1.TXT
+
+Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
+----------------------------------------------------------------------------------------------------------------------------------
+T1      0.3mm (12mil)                                             Round             1204      PTH        5000.56mm (196.87inch)
+T2      0.6mm (24mil)                                             Round             7         PTH        67.22mm (2.65inch)
+T3      0.8mm (31mil)                                             Round             30        PTH        115.00mm (4.53inch)
+T4      1mm (39mil)                                               Round             487       PTH        2274.41mm (89.54inch)
+T5      2mm (79mil)                                               Round             2         PTH        8.40mm (0.33inch)
+T6      2.5mm (98mil)                                             Round             14        PTH        721.35mm (28.40inch)
+----------------------------------------------------------------------------------------------------------------------------------
+Totals                                                                              1744
+
+Total Processing Time (hh:mm:ss) : 00:00:02
