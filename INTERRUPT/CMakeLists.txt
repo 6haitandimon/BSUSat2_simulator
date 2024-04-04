@@ -12,4 +12,5 @@ target_link_libraries(INTERRUPT
         pico_stdlib
         hardware_spi
         MCP2515
+        CANTRANSMIT
 )

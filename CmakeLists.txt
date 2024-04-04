@@ -13,6 +13,7 @@ add_subdirectory(MCP2515)
 add_subdirectory(INA3221)
 add_subdirectory(INA219)
 add_subdirectory(INTERRUPT)
+add_subdirectory(CANTRANSMIT)
 
 
 add_executable(MatherBoard
@@ -32,4 +33,5 @@ target_link_libraries(MatherBoard
         INA3221
         INA219
         INTERRUPT
+        CANTRANSMIT
 )
