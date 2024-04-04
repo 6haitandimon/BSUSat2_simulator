@@ -3,13 +3,13 @@ add_library(PCA9554 INTERFACE)
 target_include_directories(PCA9554 INTERFACE ./include)
 
 target_sources(PCA9554
-    INTERFACE
-    PCA9554.cpp
+        INTERFACE
+        PCA9554.cpp
 )
 
-target_link_libraries(PCA9554 
-                INTERFACE
-                pico_stdlib
-                hardware_i2c
-        )
+target_link_libraries(PCA9554
+        INTERFACE
+        pico_stdlib
+        hardware_i2c
+)
 

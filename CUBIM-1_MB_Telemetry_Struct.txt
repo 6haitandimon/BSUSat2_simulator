@@ -1,0 +1,127 @@
+cubim_motherboard_telemetry= Struct(
+
+	'''Battery power control fields; Slots 2-Battery pack 1; Slots 7-Battery pack 2'''
+	
+      'bat_pack0_el0_voltage' /float32,
+      'bat_pack0_el0_current' /float32,
+      'bat_pack0_el1_voltage' /float32,
+      'bat_pack0_el1_current' /float32,
+      'bat_pack0_ina219_temp' /float32,
+      
+      'bat_pack1_el0_voltage' /float32,
+      'bat_pack1_el0_current' /float32,
+      'bat_pack1_el1_voltage' /float32,
+      'bat_pack1_el1_current' /float32,
+      'bat_pack1_ina219_temp' /float32,
+      
+      '''Solar power control fields; common current and voltage values from 3 solar panels 
+      on each CUBIM-1 faces'''
+      
+      'solarpanel_front_1_current' /float32,
+      'solarpanel_front_1_voltage' /float32,
+      'solarpanel_front_1_ina3221_temp' /float32,
+      
+      'solarpanel_front_2_current' /float32,
+      'solarpanel_front_2_voltage' /float32,
+      'solarpanel_front_2_ina3221_temp' /float32,
+      
+      'solarpanel_left_current' /float32,
+      'solarpanel_left_voltage' /float32,
+      'solarpanel_left_ina3221_temp' /float32,
+      
+      'solarpanel_right_current' /float32,
+      'solarpanel_right_voltage' /float32,
+      'solarpanel_right_ina3221_temp' /float32,
+      
+      'solarpanel_back_current' /float32,
+      'solarpanel_back_voltage' /float32,
+      'solarpanel_back_ina3221_temp' /float32,
+      
+      '''Basic motherboard fields'''
+      
+      'board_Vsolar' /float32,
+      'board_Vbat' /float32,
+      'board_V_usb' /float32,
+      
+      'rp2040_mcu_Vsys' /float32,
+      'rp2040_mcu_resets' /uint16,
+      'rp2040_mcu_Vsys' /float32,
+      'rp2040_mcu_ctrl_load_cpu' /uint8,
+      'rp2040_mcu_ctrl_ram' /uint8,
+      'rp2040_mcu_clocks' /uint32,
+      'rp2040_mcu_temp' /float32,
+      
+      'rtc_unix' /float32
+      
+      '''Slots power control fields '''
+      
+      'slot1_radio1_voltage'/float32,
+      'slot1_radio1_current'/float32,
+      'slot1_radio1_overcurrent_flag'/uint8,
+      'slot1_radio1_flag_enable'/uint8,
+      
+      'slot2_batterypack1_voltage'/float32,
+      'slot2_batterypack1_current'/float32,
+      'slot2_batterypack1_overcurrent_flag' /uint8,
+      'slot2_batterypack1_flag_enable' /uint8,
+      
+      'slot3_reserve_voltage'/float32,
+      'slot3_reserve_current'/float32,
+      'slot3_reserve_overcurrent_flag' /uint8,
+      'slot3_reserve_flag_enable' /uint8,
+      
+      'slot4_camera_voltage'/float32,
+      'slot4_camera_current'/float32,
+      'slot4_camera_overcurrent_flag' /uint8,
+      'slot4_camera_flag_enable' /uint8,
+      
+      'slot5_gps_voltage'/float32,
+      'slot5_gps_current'/float32,
+      'slot5_gps_overcurrent_flag' /uint8,
+      'slot5_gps_flag_enable' /uint8,
+      
+      'slot6_reserve_voltage'/float32,
+      'slot6_reserve_current'/float32,
+      'slot6_reserve_overcurrent_flag' /uint8,
+      'slot6_reserve_flag_enable' /uint8,
+      
+      'slot7_batterypack2_voltage'/float32,
+      'slot7_batterypack2_current'/float32,
+      'slot7_batterypack2_overcurrent_flag' /uint8,
+      'slot7_batterypack2_flag_enable' /uint8,
+      
+      'slot8_coils_voltage'/float32,
+      'slot8_coils_current'/float32,
+      'slot8_coils_overcurrent_flag' /uint8,
+      'slot8_coils_flag_enable' /uint8,
+      
+      'slot9_radio2_voltage'/float32,
+      'slot9_radio2_current'/float32,
+      'slot9_radio2_overcurrent_flag'/uint8,
+      'slot9_radio2_flag_enable'/uint8,
+      
+      'slot10_solarsensors_voltage'/float32,
+      'slot10_solarsensors_current'/float32,
+      'slot10_solarsensors_overcurrent_flag'/uint8,
+      'slot10_solarsensors_flag_enable'/uint8
+      )
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      

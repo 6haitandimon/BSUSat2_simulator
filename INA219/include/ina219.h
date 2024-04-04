@@ -6,7 +6,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
-namespace INA219{
+
+namespace INA219 {
 //Range configuration
 #define RANGE_16V                           0 // Range 0-16 volts
 #define RANGE_32V                           1 // Range 0-32 volts
@@ -101,100 +102,106 @@ namespace INA219{
  * @brief Class in the controller INA219
 */
 
-class INA219 {
+    class INA219 {
     private:
-    union ByByte{
-    uint16_t byte;
-    struct {
-        uint8_t l;
-        uint8_t d;
+        union ByByte {
+            uint16_t byte;
+            struct {
+                uint8_t l;
+                uint8_t d;
+            };
         };
-    };
-    i2c_inst_t *i2c;
-    uint8_t SDA;
-    uint8_t SCL;
-    uint8_t _i2cAddr;
-    float _maxExpectedAmps;
-    float _battLow;
-    float _battFull;
-    float _currentLsb;
-    float _powerLsb;
-    float _shuntResistorOhms;
-    ByByte _calibrationValue;
-    ByByte _configuration;
+        i2c_inst_t *i2c;
+        uint8_t SDA;
+        uint8_t SCL;
+        uint8_t _i2cAddr;
+        float _maxExpectedAmps;
+        float _battLow;
+        float _battFull;
+        float _currentLsb;
+        float _powerLsb;
+        float _shuntResistorOhms;
+        ByByte _calibrationValue;
+        ByByte _configuration;
 
-    uint16_t read_register(uint8_t registr);
-    void write_register(uint8_t register_address, INA219::ByByte register_value);
+        uint16_t read_register(uint8_t registr);
+
+        void write_register(uint8_t register_address, INA219::ByByte register_value);
 
     public:
-    /**
- * @brief initialization function for ina219
- * 
- * @param i2c - pointer to initializer structure i2c
- *              i2c0, i2c1;
- * 
- * @param SDA - SDA pin
- * 
- * @param SCL - SCL pin
- * 
- * @param addr - Sensor address ina219 on the bus i2c
- *              __ADDRESS_0x40(default), __ADDRESS_0x41 and so on.
- * 
- * @param max_expected_amps - The maximum expected current in the circuit.
-                            (For proper calibration I recommend 3.2)
+        /**
+     * @brief initialization function for ina219
+     *
+     * @param i2c - pointer to initializer structure i2c
+     *              i2c0, i2c1;
+     *
+     * @param SDA - SDA pin
+     *
+     * @param SCL - SCL pin
+     *
+     * @param addr - Sensor address ina219 on the bus i2c
+     *              __ADDRESS_0x40(default), __ADDRESS_0x41 and so on.
+     *
+     * @param max_expected_amps - The maximum expected current in the circuit.
+                                (For proper calibration I recommend 3.2)
 
- * @param batt_full - Maximum battery voltage. 
-                    (If not used, set the parameter to 0)
+     * @param batt_full - Maximum battery voltage.
+                        (If not used, set the parameter to 0)
 
- * @param batt_low - Minimum battery voltage. 
-                    (If not used, set the parameter to 0)
- 
- * @param shunt_resistor_ohms - Shunt resistor resistance.
+     * @param batt_low - Minimum battery voltage.
+                        (If not used, set the parameter to 0)
 
- * @param calibration_value - The exact value of the calibration register.
-                            (If calibration has not been performed, set the value to 4096)
-*/
-    INA219(i2c_inst_t *i2c, uint8_t SDA, uint8_t SCL, uint8_t addr, float max_expected_amps, float batt_full, float batt_low, float shunt_resistor_ohms, uint16_t calibration_value);
-    /**
- * @brief Configures how the INA219 will take measurements
- * 
- * @param flag_calibration - Flag that indicates the need to call 
-                            the calibration function of register 0x00
+     * @param shunt_resistor_ohms - Shunt resistor resistance.
 
- * @param RESET - Configuration register bit 15 meaning;
-                RESET_SYSTEM, NO_RESET_SYSTEM
+     * @param calibration_value - The exact value of the calibration register.
+                                (If calibration has not been performed, set the value to 4096)
+    */
+        INA219(i2c_inst_t *i2c, uint8_t SDA, uint8_t SCL, uint8_t addr, float max_expected_amps, float batt_full,
+               float batt_low, float shunt_resistor_ohms, uint16_t calibration_value);
 
- * @param RANGE - The full scale voltage range, this is either 16V
-                or 32V represented by one of the following constants;
-                RANGE_16V, RANGE_32V (default).
+        /**
+     * @brief Configures how the INA219 will take measurements
+     *
+     * @param flag_calibration - Flag that indicates the need to call
+                                the calibration function of register 0x00
 
- * @param GAIN  - The gain which controls the maximum range of the shunt
-                voltage represented by one of the following constants;
-                GAIN_1_40MV, GAIN_2_80MV, GAIN_4_160MV,
-                GAIN_8_320MV(default).
+     * @param RESET - Configuration register bit 15 meaning;
+                    RESET_SYSTEM, NO_RESET_SYSTEM
 
- * @param BADC - The bus ADC resolution (9, 10, 11, or 12-bit) or
-                set the number of samples used when averaging results
-                represent by one of the following constants; ADC_9BIT,
-                ADC_10BIT, ADC_11BIT, ADC_12BIT (default),
-                ADC_2SAMP, ADC_4SAMP, ADC_8SAMP, ADC_16SAMP,
-                ADC_32SAMP, ADC_64SAMP, ADC_128SAMP.
+     * @param RANGE - The full scale voltage range, this is either 16V
+                    or 32V represented by one of the following constants;
+                    RANGE_16V, RANGE_32V (default).
 
- * @param CADC - The shunt ADC resolution (9, 10, 11, or 12-bit) or
-                set the number of samples used when averaging results
-                represent by one of the following constants; ADC_9BIT,
-                ADC_10BIT, ADC_11BIT, ADC_12BIT (default),
-                ADC_2SAMP, ADC_4SAMP, ADC_8SAMP, ADC_16SAMP,
-                ADC_32SAMP, ADC_64SAMP, ADC_128SAMP.
+     * @param GAIN  - The gain which controls the maximum range of the shunt
+                    voltage represented by one of the following constants;
+                    GAIN_1_40MV, GAIN_2_80MV, GAIN_4_160MV,
+                    GAIN_8_320MV(default).
 
-* @param MODE  - This parameter sets the operating mode of the sensor.
-                __PWR_DOWN (Power-down), __SH_TRIG (Shunt voltage, triggered), 
-                __BUS_TRIG (Bus voltage, triggered), __SH_BUS_TRIG (Shunt and bus, triggered),
-                __ADC_OFF (ADC off (disabled)), __CONT_SH (Shunt voltage, continuous), 
-                __CONT_BUS (Bus voltage, continuous), __CONT_SH_BUS (Shunt and bus, continuous) (default)
-* @return Update struct ina219
-*/
-    void configuration(bool flag_calibration, uint8_t RESET, uint8_t RANGE, uint8_t GAIN, uint8_t BADC, uint8_t CADC, uint8_t MODE);
+     * @param BADC - The bus ADC resolution (9, 10, 11, or 12-bit) or
+                    set the number of samples used when averaging results
+                    represent by one of the following constants; ADC_9BIT,
+                    ADC_10BIT, ADC_11BIT, ADC_12BIT (default),
+                    ADC_2SAMP, ADC_4SAMP, ADC_8SAMP, ADC_16SAMP,
+                    ADC_32SAMP, ADC_64SAMP, ADC_128SAMP.
+
+     * @param CADC - The shunt ADC resolution (9, 10, 11, or 12-bit) or
+                    set the number of samples used when averaging results
+                    represent by one of the following constants; ADC_9BIT,
+                    ADC_10BIT, ADC_11BIT, ADC_12BIT (default),
+                    ADC_2SAMP, ADC_4SAMP, ADC_8SAMP, ADC_16SAMP,
+                    ADC_32SAMP, ADC_64SAMP, ADC_128SAMP.
+
+    * @param MODE  - This parameter sets the operating mode of the sensor.
+                    __PWR_DOWN (Power-down), __SH_TRIG (Shunt voltage, triggered),
+                    __BUS_TRIG (Bus voltage, triggered), __SH_BUS_TRIG (Shunt and bus, triggered),
+                    __ADC_OFF (ADC off (disabled)), __CONT_SH (Shunt voltage, continuous),
+                    __CONT_BUS (Bus voltage, continuous), __CONT_SH_BUS (Shunt and bus, continuous) (default)
+    * @return Update struct ina219
+    */
+        void
+        configuration(bool flag_calibration, uint8_t RESET, uint8_t RANGE, uint8_t GAIN, uint8_t BADC, uint8_t CADC,
+                      uint8_t MODE);
+
 /**
  * @brief Function for calibrating register 0x05 according 
  * to specified parameters into the initialization function. 
@@ -204,21 +211,24 @@ class INA219 {
  * @return Update struct ina219 
 
 */
-    void calibration();
-    /**
- * @brief Getting voltage in Volts
- * 
- * @return Voltage value
-*/
-    float get_voltage();
-    /**
- * @brief Getting the current in miles Amperes
- * 
- * @param ina - Pointer to a structure with sensor parameters
- * 
- * @return Volt value (float)
-*/
-    float get_current_mA();
+        void calibration();
+
+        /**
+     * @brief Getting voltage in Volts
+     *
+     * @return Voltage value
+    */
+        float get_voltage();
+
+        /**
+     * @brief Getting the current in miles Amperes
+     *
+     * @param ina - Pointer to a structure with sensor parameters
+     *
+     * @return Volt value (float)
+    */
+        float get_current_mA();
+
 /**
  * @brief Getting the current in Amperes
  * 
@@ -226,7 +236,8 @@ class INA219 {
  * 
  * @return Current value in Amperes (float)
 */
-    float get_current();
+        float get_current();
+
 /**
  * @brief Getting the power in miles Wattah
  * 
@@ -234,7 +245,8 @@ class INA219 {
  * 
  * @return Power value in miles Wattah (float)
 */
-    float get_power_mW();
+        float get_power_mW();
+
 /**
  * @brief Getting the power in Wattah
  * 
@@ -242,7 +254,8 @@ class INA219 {
  * 
  * @return Power value in Wattah (float)
 */
-    float get_power();
+        float get_power();
+
 /**
  * @brief Obtaining the power of the current on the shunt in miles Amperes
  * 
@@ -250,7 +263,8 @@ class INA219 {
  * 
  * @return Shunt current value in miles Amperes (float)
 */
-    float get_current_from_shunt_in_mA();
+        float get_current_from_shunt_in_mA();
+
 /**
  * @brief Obtaining the shunt voltage in miles Volts
  * 
@@ -258,6 +272,6 @@ class INA219 {
  * 
  * @return Shunt voltage value in miles Volts (float)
 */
-    float get_shunt_voltage_in_mV();
-};
+        float get_shunt_voltage_in_mV();
+    };
 }

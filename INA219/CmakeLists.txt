@@ -3,12 +3,12 @@ add_library(INA219 INTERFACE)
 target_include_directories(INA219 INTERFACE ./include)
 
 target_sources(INA219
-    INTERFACE
-    INA219.cpp
+        INTERFACE
+        INA219.cpp
 )
 
-target_link_libraries(INA219 
-                INTERFACE
-                pico_stdlib
-                hardware_i2c
-        )
+target_link_libraries(INA219
+        INTERFACE
+        pico_stdlib
+        hardware_i2c
+)

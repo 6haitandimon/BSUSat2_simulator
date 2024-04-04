@@ -12,6 +12,8 @@ add_subdirectory(PCA9554)
 add_subdirectory(MCP2515)
 add_subdirectory(INA3221)
 add_subdirectory(INA219)
+add_subdirectory(INTERRUPT)
+
 
 add_executable(MatherBoard
         main.cpp
@@ -23,10 +25,11 @@ pico_enable_stdio_uart(MatherBoard 0)
 pico_add_extra_outputs(MatherBoard)
 
 target_link_libraries(MatherBoard
-  pico_stdlib
-  hardware_adc
-  PCA9554
-  MCP2515
-  INA3221
-  INA219
+        pico_stdlib
+        hardware_adc
+        PCA9554
+        MCP2515
+        INA3221
+        INA219
+        INTERRUPT
 )

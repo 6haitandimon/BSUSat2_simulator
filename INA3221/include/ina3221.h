@@ -7,7 +7,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-namespace INA3221{
+namespace INA3221 {
 
 #define RESET_SYSTEM                        1 // bit to reset system
 
@@ -74,19 +74,18 @@ namespace INA3221{
 #define __MODE0                             0 //Power-down
 
 
-
-class INA3221{
+    class INA3221 {
     private:
-        union ByByte{
-        uint16_t byte;
-        struct {
-            uint8_t l;
-            uint8_t d;
+        union ByByte {
+            uint16_t byte;
+            struct {
+                uint8_t l;
+                uint8_t d;
             };
         };
 
         i2c_inst_t *i2c;
-        uint8_t SDA; 
+        uint8_t SDA;
         uint8_t SCL;
         uint8_t _addr;
         float _batt_low;
@@ -94,17 +93,22 @@ class INA3221{
         float _shunt_resistor_ohms;
 
         uint16_t ReadRegister(uint8_t register_address);
+
         void WriteRegister(uint8_t register_address, INA3221::ByByte register_value);
 
     public:
 
-        INA3221(i2c_inst_t *i2c, uint8_t SDA, uint8_t SCL, uint8_t addr, float batt_full, float batt_low, float shunt_resistor_ohms);
+        INA3221(i2c_inst_t *i2c, uint8_t SDA, uint8_t SCL, uint8_t addr, float batt_full, float batt_low,
+                float shunt_resistor_ohms);
 
         void Configuration();
 
         float GetVoltage(uint8_t channel);
+
         float GetCurrent(uint8_t channel);
+
         float GetPower(uint8_t channel);
+
         float GetShuntVoltage(uint8_t channel);
 
     };
