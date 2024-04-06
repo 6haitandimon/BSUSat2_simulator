@@ -5,4 +5,6 @@
 #define MCPInterruptPin 22
 
 extern MCP2515 can0;
-void MCPInterruptSetup();
+namespace INTERRUPT {
+    void MCPInterruptSetup();
+}

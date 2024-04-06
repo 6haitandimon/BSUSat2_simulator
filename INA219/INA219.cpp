@@ -121,4 +121,10 @@ namespace INA219 {
         write_register(__REG_CALIBRATION, this->_calibrationValue);
 
     }
+
+    void INA219::changeAddres(uint8_t addr){
+        this->_i2cAddr = addr;
+        configuration(false, NO_RESET_SYSTEM, RANGE_32V, GAIN_8_320MV, ADC_12BIT, ADC_12BIT, __CONT_SH_BUS);
+        return;
+    }
 }

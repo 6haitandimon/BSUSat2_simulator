@@ -1,13 +1,10 @@
 #include "PCA9554.h"
 
-PCA9554::PCA9554(uint8_t I2C_num, uint8_t SCL, uint8_t SDA, uint8_t address, uint8_t config) :
+PCA9554::PCA9554(i2c_inst_t *I2C_num, uint8_t SCL, uint8_t SDA, uint8_t address, uint8_t config) :
         I2C_num(I2C_num), SCL(SCL),
         SDA(SDA), address(address),
         config(config) {
-    if (I2C_num == 0)
-        i2c_init(i2c0, 400000);
-    else
-        i2c_init(i2c1, 400000);
+    i2c_init(I2C_num,  400000);
     gpio_set_function(SDA, GPIO_FUNC_I2C);
     gpio_set_function(SCL, GPIO_FUNC_I2C);
     gpio_pull_up(SCL);
@@ -76,12 +73,7 @@ bool PCA9554::disableSlot(uint8_t slotNumber) {
 bool PCA9554::write(uint8_t registr, uint8_t data) {
     uint8_t writeData[2] = {registr, data};
     uint8_t ret = 0;
-    if (I2C_num == 0) {
-        ret = i2c_write_blocking(i2c0, this->address, writeData, 2, false);
-    } else {
-        ret = i2c_write_blocking(i2c1, this->address, writeData, 2, false);
-    }
-
+    ret = i2c_write_blocking(this->I2C_num, this->address, writeData, 2, false);
     if (ret < 0) return 0;
     else return 1;
 }
@@ -89,22 +81,12 @@ bool PCA9554::write(uint8_t registr, uint8_t data) {
 uint8_t PCA9554::read(uint8_t registr) {
     uint8_t readData[2];
     uint8_t ret = 0;
-    if (I2C_num == 0) {
-        ret = i2c_write_blocking(i2c0, this->address, &registr, 1, false);
-        if (ret < 0)
-            printf("Error write register\n");
+    ret = i2c_write_blocking(this->I2C_num, this->address, &registr, 1, false);
+    if (ret < 0)
+        printf("Error write register\n");
 
-        ret = i2c_read_blocking(i2c0, this->address, readData, 1, false);
-        if (ret < 0)
-            printf("Failed to read register value\n");
-    } else {
-        ret = i2c_write_blocking(i2c1, this->address, &registr, 1, false);
-        if (ret < 0)
-            printf("Error write register\n");
-
-        ret = i2c_read_blocking(i2c0, this->address, readData, 1, false);
-        if (ret < 0)
-            printf("Failed to read register value\n");
-    }
+    ret = i2c_read_blocking(this->I2C_num, this->address, readData, 1, false);
+    if (ret < 0)
+        printf("Failed to read register value\n");
     return readData[0];
 }

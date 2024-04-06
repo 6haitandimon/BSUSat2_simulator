@@ -10,11 +10,14 @@
 #define INA3221_SHUNT_T_RESISTANCE 270.0
 
 MCP2515 can0 = MCP2515( spi0, 17, 19, 16, 18);
+
 INA3221::INA3221 ina3221_1 = INA3221::INA3221(i2c0, 20, 21, 0x42, 4.2, 3.3, 0.2);
 INA3221::INA3221 ina3221_2 = INA3221::INA3221(i2c0, 20, 21, 0x43, 4.2, 3.3, 0.2);
 
+PCA9554 pca9554_1 = PCA9554(i2c0, 21, 20, 0x3F, 0x40);
+PCA9554 pca9554_2 = PCA9554(i2c0, 21, 20, 0x38, 0x70);
+INA219::INA219 ina219_slot = INA219::INA219(i2c0, 20, 21, 4.2, 0x44, 1.0, 3.2, 0.1, 3291);
 float convertionFactor = 3.009 / (4095.0) * (5.0 / 3.0);
-
 
 double A = 0.8781625571e-3;
 double B = 2.531972392e-4;
@@ -43,11 +46,15 @@ float ADCRead(uint32_t channel){
 
 int main() {
     stdio_init_all();
+
     ADCInit();
+
     can0.reset();
     can0.setBitrate(CAN_200KBPS, MCP_8MHZ);
     can0.setNormalMode();
-    MCPInterruptSetup();
+
+    INTERRUPT::MCPInterruptSetup();
+
     while (true) {
 
         float VUSB = ADCRead(1);
@@ -87,6 +94,7 @@ int main() {
 
         printf("vBat2_1: %f\ncBat2_1: %f\n\n", vBat2_1, cBat2_1);
         printf("vBat2_2: %f\ncBat2_2: %f\n\nTBat: %f\n\n\n", vBat2_2, cBat2_2, TempBat2);
+
         sleep_ms(150);
 
     }
@@ -97,13 +105,16 @@ int main() {
 //ADC channel 2 GP28 VBus
 
 // #Slots
-// #1-Radio1
-// #2-Battery1 state ON after Rbf remove
-// #3-Reserve
-// #4-Camera
-// #5-GPS
-// #6-Reserve
-// #7-Battery2 state ON after Rbf remove
-// #8-Coils
-// #9-Radio2
-// #10-SolarSensors
+//PCA: 0x3F
+// #1-Radio1 Slot: 0x02
+// #2-Battery1 state ON after Rbf remove Slot: 0x04
+// #8-Coils Slot: 0x20
+// #9-Radio2 Slot: 0x80
+// #10-SolarSensors Slot: 0x10
+
+//PCA: 0x38
+// #3-Reserve Slot: 0x01
+// #4-Camera Slot: 0x02
+// #5-GPS Slot: 0x04
+// #6-Reserve Slot: 0x08
+// #7-Battery2 state ON after Rbf remove Slot: 0x80

@@ -8,14 +8,14 @@
 
 class PCA9554 {
 private:
-    uint8_t I2C_num;
+    i2c_inst_t *I2C_num;
     uint8_t address;
     uint8_t config;
     uint8_t SCL;
     uint8_t SDA;
     uint8_t slotBit[11];
 public:
-    PCA9554(uint8_t I2C_num, uint8_t SCL, uint8_t SDA, uint8_t address, uint8_t config);
+    PCA9554(i2c_inst_t *I2C_num, uint8_t SCL, uint8_t SDA, uint8_t address, uint8_t config);
 
     bool configuration(uint8_t config);
 

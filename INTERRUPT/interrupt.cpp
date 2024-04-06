@@ -9,9 +9,11 @@ void MCPCallback(uint gpio, uint32_t events){
     return;
 }
 
-void MCPInterruptSetup(){
+namespace INTERRUPT{
+    void MCPInterruptSetup(){
 
-    gpio_set_irq_enabled_with_callback(MCPInterruptPin, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, MCPCallback);
-    can0.clearInterrupts();
-    return;
+        gpio_set_irq_enabled_with_callback(MCPInterruptPin, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, MCPCallback);
+        can0.clearInterrupts();
+        return;
+    }
 }

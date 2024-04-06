@@ -223,16 +223,12 @@ namespace INA219 {
         /**
      * @brief Getting the current in miles Amperes
      *
-     * @param ina - Pointer to a structure with sensor parameters
-     *
      * @return Volt value (float)
     */
         float get_current_mA();
 
 /**
  * @brief Getting the current in Amperes
- * 
- * @param ina - Pointer to a structure with sensor parameters
  * 
  * @return Current value in Amperes (float)
 */
@@ -241,16 +237,12 @@ namespace INA219 {
 /**
  * @brief Getting the power in miles Wattah
  * 
- * @param ina - Pointer to a structure with sensor parameters
- * 
  * @return Power value in miles Wattah (float)
 */
         float get_power_mW();
 
 /**
  * @brief Getting the power in Wattah
- * 
- * @param ina - Pointer to a structure with sensor parameters
  * 
  * @return Power value in Wattah (float)
 */
@@ -259,19 +251,21 @@ namespace INA219 {
 /**
  * @brief Obtaining the power of the current on the shunt in miles Amperes
  * 
- * @param ina - Pointer to a structure with sensor parameters
- * 
  * @return Shunt current value in miles Amperes (float)
 */
         float get_current_from_shunt_in_mA();
 
 /**
  * @brief Obtaining the shunt voltage in miles Volts
- * 
- * @param ina - Pointer to a structure with sensor parameters
- * 
+ *
  * @return Shunt voltage value in miles Volts (float)
 */
         float get_shunt_voltage_in_mV();
+/**
+ * @brief Change INA address
+ *
+ * @param addr - The new address to INA219
+*/
+        void changeAddres(uint8_t addr);
     };
 }
