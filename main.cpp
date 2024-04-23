@@ -16,12 +16,15 @@ INA3221::INA3221 ina3221_2 = INA3221::INA3221(i2c0, 20, 21, 0x43, 4.2, 3.3, 0.2)
 
 PCA9554 pca9554_1 = PCA9554(i2c0, 21, 20, 0x3F, 0x40);
 PCA9554 pca9554_2 = PCA9554(i2c0, 21, 20, 0x38, 0x70);
-INA219::INA219 ina219_slot = INA219::INA219(i2c0, 20, 21, 4.2, 0x44, 1.0, 3.2, 0.1, 3291);
+INA219::INA219 ina219_slot = INA219::INA219(i2c0, 20, 21,  0x44, 4.2, 1.0, 3.2, 0.1, 3291);
 float convertionFactor = 3.009 / (4095.0) * (5.0 / 3.0);
 
 double A = 0.8781625571e-3;
 double B = 2.531972392e-4;
 double C = 1.840753501e-7;
+
+float MatherBoardTelemtry[13];
+
 
 void ADCInit() {
     adc_init();
@@ -50,27 +53,28 @@ int main() {
     ADCInit();
 
     can0.reset();
-    can0.setBitrate(CAN_200KBPS, MCP_8MHZ);
+    can0.setBitrate(CAN_1000KBPS, MCP_16MHZ);
+    INTERRUPT::MCPInterruptSetup();
     can0.setNormalMode();
 
-    INTERRUPT::MCPInterruptSetup();
+
 
     while (true) {
 
-        float VUSB = ADCRead(1);
-        float VBUS = ADCRead(2);
+        MatherBoardTelemtry[0] = ADCRead(1);
+        MatherBoardTelemtry[1] = ADCRead(2);
 
-        float vBat1_1 = ina3221_1.GetVoltage(1);
-        float cBat1_1 = ina3221_1.GetCurrent(1);
+        MatherBoardTelemtry[2] = ina3221_1.GetVoltage(1);
+        MatherBoardTelemtry[3] = ina3221_1.GetCurrent(1);
 
-        float vBat1_2 = ina3221_1.GetVoltage(3);
-        float cBat1_2 = ina3221_1.GetCurrent(3);
+        MatherBoardTelemtry[4] = ina3221_1.GetVoltage(3);
+        MatherBoardTelemtry[5] = ina3221_1.GetCurrent(3);
 
-        float vBat2_1 = ina3221_2.GetVoltage(1);
-        float cBat2_1 = ina3221_2.GetCurrent(1);
+        MatherBoardTelemtry[6] = ina3221_2.GetVoltage(1);
+        MatherBoardTelemtry[7] = ina3221_2.GetCurrent(1);
 
-        float vBat2_2 = ina3221_2.GetVoltage(3);
-        float cBat2_2 = ina3221_2.GetCurrent(3);
+        MatherBoardTelemtry[8] = ina3221_2.GetVoltage(3);
+        MatherBoardTelemtry[9] = ina3221_2.GetCurrent(3);
 
         float TBat_1 = ina3221_1.GetVoltage(2);
         float TBatShunt_1 = ina3221_1.GetShuntVoltage(2);
@@ -81,21 +85,11 @@ int main() {
         float RTermistorBat_1 = TBat_1 / (TBatShunt_1 / INA3221_SHUNT_T_RESISTANCE);
         float RTermistorBat_2 = TBat_2 / (TBatShunt_2 / INA3221_SHUNT_T_RESISTANCE);
 
-        float TempBat1 = 1.0 / (A + B * log(RTermistorBat_1) + C * pow(log(RTermistorBat_1), 3));
-        float TempBat2 = 1.0 / (A + B * log(RTermistorBat_2) + C * pow(log(RTermistorBat_2), 3));
+        MatherBoardTelemtry[10] = 1.0 / (A + B * log(RTermistorBat_1) + C * pow(log(RTermistorBat_1), 3));
+        MatherBoardTelemtry[11] = 1.0 / (A + B * log(RTermistorBat_2) + C * pow(log(RTermistorBat_2), 3));
 
-        TempBat1 -= 273.15;
-        TempBat2 -= 273.15;
-
-        printf("VBUS: %f\nVUSB: %f\n\n", VBUS, VUSB);
-
-        printf("vBat1_1: %f\ncBat1_1: %f\n\n", vBat1_1, cBat1_1);
-        printf("vBat1_2: %f\ncBat1_2: %f\n\nTBat: %f\n\n\n", vBat1_2, cBat1_2, TempBat1);
-
-        printf("vBat2_1: %f\ncBat2_1: %f\n\n", vBat2_1, cBat2_1);
-        printf("vBat2_2: %f\ncBat2_2: %f\n\nTBat: %f\n\n\n", vBat2_2, cBat2_2, TempBat2);
-
-        sleep_ms(150);
+        MatherBoardTelemtry[10] -= 273.15;
+        MatherBoardTelemtry[11] -= 273.15;
 
     }
 }

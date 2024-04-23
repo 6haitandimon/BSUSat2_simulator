@@ -4,7 +4,7 @@ target_include_directories(CANTRANSMIT INTERFACE ./include)
 
 target_sources(CANTRANSMIT
         INTERFACE
-        can.cpp
+        canTransmit.cpp
 )
 
 target_link_libraries(CANTRANSMIT

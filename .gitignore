@@ -67,3 +67,7 @@ build/
 CAN_driver/.vscode/
 
 cmake-build-debug/
+
+.vscode/
+
+cmake-build-release/

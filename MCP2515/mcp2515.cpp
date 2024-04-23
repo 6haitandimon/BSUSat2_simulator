@@ -653,7 +653,6 @@ MCP2515::ERROR MCP2515::sendMessage(const struct can_frame *frame) {
     for (int i = 0; i < N_TXBUFFERS; i++) {
         const struct TXBn_REGS *txbuf = &TXB[txBuffers[i]];
         uint8_t ctrlval = readRegister(txbuf->CTRL);
-        printf("%d\n", ctrlval);
         if ((ctrlval & TXB_TXREQ) == 0) {
             return sendMessage(txBuffers[i], frame);
         }
