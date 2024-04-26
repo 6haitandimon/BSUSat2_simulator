@@ -15,7 +15,7 @@ namespace CAN{
         canByte canData;
         canData.data = data;
 //        if(busyByte + needToByte > freeByte){
-//            busyByte = 0;
+//            busyByte = 1;
 //            return -1;
 //        }
         for(uint8_t index = 1; index < needToByte + 1; index++){

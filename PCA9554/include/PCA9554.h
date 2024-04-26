@@ -13,7 +13,10 @@ private:
     uint8_t config;
     uint8_t SCL;
     uint8_t SDA;
-    uint8_t slotBit[11];
+    struct{
+        uint8_t slotbit;
+        bool enableFlags;
+    } slotBit[11];
 public:
     PCA9554(i2c_inst_t *I2C_num, uint8_t SCL, uint8_t SDA, uint8_t address, uint8_t config);
 
@@ -26,6 +29,8 @@ public:
     bool disableSlot(uint8_t slotNumber);
 
     bool disableAllSlots();
+
+    bool getEnableFlag(uint8_t slotNumber);
 
 private:
     bool write(uint8_t registr, uint8_t data);

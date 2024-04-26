@@ -5,7 +5,7 @@ void canAnswer(can_frame rx){
     can_frame tx;
     tx.can_id = 0x01;
     tx.can_dlc = 1;
-    tx.data[0] = 12;
+    tx.data[0] = 47;
     if(rx.data[1] == 9){
         if(can0.sendMessage(&tx) ==MCP2515::ERROR_OK){
             printf("Answer done\n");
@@ -13,19 +13,18 @@ void canAnswer(can_frame rx){
         }
         busy_wait_ms(100);
 //        sleep_ms(2000);
+
         for(int index = 0; index < tx.data[0]; index++){
             can_frame frame;
             frame.can_dlc = 1;
             frame.data[0] = index + 1;
             CAN::CanPreparation(frame, 4, MatherBoardTelemtry[index]);
-            if(can0.sendMessage(&frame) == MCP2515::ERROR_OK){
-                printf("packeg number %d done send\n", index);
-
-//                sleep_ms(2000);
-            }else{
-                index--;
-            }
-            busy_wait_ms(100);
+            uint8_t error = -1;
+            while(error != MCP2515::ERROR::ERROR_OK){
+                error = can0.sendMessage(&frame);
+                busy_wait_ms(100);
+                }
+            printf("can frame number %d send done", index);
         }
     }
     return;

@@ -92,7 +92,10 @@ namespace INA219 {
         this->_currentLsb = (__CALIBRATION_FACTOR / calibration_value) / shunt_resistor_ohms;
         this->_powerLsb = 20 * this->_currentLsb;
         this->_calibrationValue.byte = calibration_value;
-        configuration(false, NO_RESET_SYSTEM, RANGE_32V, GAIN_8_320MV, ADC_12BIT, ADC_12BIT, __CONT_SH_BUS);
+        for(int i = addr; i < addr + 9; i++){
+            this->_i2cAddr = addr;
+            configuration(false, RESET_SYSTEM, RANGE_32V, GAIN_8_320MV, ADC_12BIT, ADC_12BIT, __CONT_SH_BUS);
+        }
     }
 
     void
@@ -124,7 +127,6 @@ namespace INA219 {
 
     void INA219::changeAddres(uint8_t addr){
         this->_i2cAddr = addr;
-        configuration(false, NO_RESET_SYSTEM, RANGE_32V, GAIN_8_320MV, ADC_12BIT, ADC_12BIT, __CONT_SH_BUS);
         return;
     }
 }

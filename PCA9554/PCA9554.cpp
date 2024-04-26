@@ -11,6 +11,8 @@ PCA9554::PCA9554(i2c_inst_t *I2C_num, uint8_t SCL, uint8_t SDA, uint8_t address,
     gpio_pull_up(SDA);
 
     write(PCA9554_REG_CONFIG, config);
+
+    disableAllSlots();
 }
 
 bool PCA9554::configuration(uint8_t config) {
@@ -26,6 +28,8 @@ bool PCA9554::configuration(uint8_t config) {
 
 bool PCA9554::disableAllSlots() {
     if (write(PCA9554_REG_OUTPUT_PORT, 0)) {
+        for(int i = 0; i< 11; i++)
+            this->slotBit[i].enableFlags= 0;
         printf("All slots enable successful\n");
         return 1;
     } else {
@@ -34,12 +38,18 @@ bool PCA9554::disableAllSlots() {
     }
 }
 
+bool PCA9554::getEnableFlag(uint8_t slotNumber){
+    return this->slotBit[slotNumber].enableFlags;
+}
+
 void PCA9554::slotAdd(uint8_t slotNumber, uint8_t slotAddress) {
-    this->slotBit[slotNumber] = slotAddress;
+    this->slotBit[slotNumber].slotbit = slotAddress;
+    this->slotBit[slotNumber].enableFlags = 0;
 }
 
 bool PCA9554::enableSlot(uint8_t slotNumber) {
-    if (write(PCA9554_REG_OUTPUT_PORT, this->slotBit[slotNumber])) {
+    if (write(PCA9554_REG_OUTPUT_PORT, this->slotBit[slotNumber].slotbit)) {
+        this->slotBit[slotNumber].enableFlags = 1;
         printf("Slot enable successful\n");
         return 1;
     } else {
@@ -52,9 +62,10 @@ bool PCA9554::disableSlot(uint8_t slotNumber) {
     uint8_t configRegStatus = read(PCA9554_REG_INPUT_PORT);
     //for debug
     printf("config reg status: %d\n", configRegStatus);
-    printf("Slot bit status: %d\n", configRegStatus ^ this->slotBit[slotNumber]);
+    printf("Slot bit status: %d\n", configRegStatus ^ this->slotBit[slotNumber].slotbit);
 
-    if (write(PCA9554_REG_OUTPUT_PORT, configRegStatus ^ this->slotBit[slotNumber])) {
+    if (write(PCA9554_REG_OUTPUT_PORT, configRegStatus ^ this->slotBit[slotNumber].slotbit)) {
+        this->slotBit[slotNumber].enableFlags = 0;
         printf("Slot enable successful\n");
         return 1;
     } else {

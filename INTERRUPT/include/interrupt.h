@@ -6,7 +6,7 @@
 #include "canTransmit.h"
 #define MCPInterruptPin 22
 
-extern float MatherBoardTelemtry[13];
+extern float MatherBoardTelemtry[47];
 extern MCP2515 can0;
 namespace INTERRUPT {
     void MCPInterruptSetup();
