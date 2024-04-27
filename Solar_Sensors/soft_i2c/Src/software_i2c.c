@@ -62,9 +62,7 @@ HAL_StatusTypeDef I2C_MASTER_TRANSMIT(sw_i2cT *hi2c, u8 DevAddress, u8 *pData, u
         }
     }
     stopCondition(hi2c);
-    hi2c->status = HAL_OK;
-
-    return hi2c->status;
+    return hi2c->status = HAL_OK;
 }
 
 /**

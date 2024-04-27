@@ -62,7 +62,7 @@ typedef struct BH1750 {
 BH1750_t BH1750_Init(sw_i2cT* i2c_handle,bool ADDR_GND);
 StatusTypeDef ChechStatus(const BH1750_t * obj);
 StatusTypeDef BH1750_ON(const BH1750_t * obj);
-StatusTypeDef BH1750_WR(const BH1750_t * obj,uint8_t cmd);
+StatusTypeDef BH1750_WR(const BH1750_t * obj,uint8_t *cmd);
 StatusTypeDef BH1750_RD(BH1750_t * obj);
 float BH1750_get_value(BH1750_t *obj);
 
