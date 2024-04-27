@@ -37,13 +37,13 @@ StatusTypeDef ChechStatus(const BH1750_t* obj){
  * @param [in] cmd команда на исполнение
  * @return возвращает состояния датчика после исполнения команды StatusTypeDef
  */
-StatusTypeDef BH1750_WR(const BH1750_t * obj,uint8_t cmd){
-    if(I2C_Master_Transmit(obj->i2c_handle,       // i2c handler
+StatusTypeDef BH1750_WR(const BH1750_t * obj,uint8_t *cmd){
+    StatusTypeDef status;
+    status = I2C_Master_Transmit(obj->i2c_handle,       // i2c handler
                                obj->address_WR  // адрес на запись
-                               ,&cmd,               // команда на исполнение
-                               1,10)!= OK) {return Error;};
-
-    return OK;
+                               ,cmd,               // команда на исполнение
+                               3,10);
+    return status;
 }
 /**
  * @brief Считывает значение с датчика
@@ -61,14 +61,11 @@ StatusTypeDef BH1750_RD(BH1750_t  *obj){
  * @return возвращает состояния датчика после включения StatusTypeDef.
  */
 StatusTypeDef BH1750_ON(const BH1750_t *obj){
-    StatusTypeDef status;
-
-    if ((status = BH1750_WR(obj, POWER_ON)) != OK ||
-    (status = BH1750_WR(obj, RESET_)) != OK ||
-    (status = BH1750_WR(obj, H_RES_MODE)) != OK) {
-        return status;
-    }
-    return OK;
+    if(BH1750_WR(obj, (uint8_t *) POWER_ON) == OK)
+        if(BH1750_WR(obj, (uint8_t *) RESET_) == OK)
+            if(BH1750_WR(obj, (uint8_t *) H_RES_MODE) == OK)
+                return OK;
+    return Error;
 }
 /**
  * @brief Считывает значения с датчика в lx
