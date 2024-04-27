@@ -64,7 +64,7 @@ include_directories(Core/Inc Drivers/STM32F0xx_HAL_Driver/Inc Drivers/STM32F0xx_
 
         BH1750/Inc
 
-        si1143_a11_gmr/Inc
+        #si1143_a11_gmr/Inc
 )
 
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F030x6)
@@ -77,7 +77,7 @@ file(GLOB_RECURSE SOURCES "Core/*.*" "Drivers/*.*"
 
         BH1750/Src/*.*
 
-        si1143_a11_gmr/Src/*.*
+        #si1143_a11_gmr/Src/*.*
 )
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F030F4PX_FLASH.ld)

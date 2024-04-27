@@ -21,14 +21,14 @@ sw_i2cT SW_I2C_INIT(GPIO_TypeDef* sdaPort, u16 sdaPin, GPIO_TypeDef* sclPort, u1
 
     temp.Pin = sdaPin;
     temp.Mode = GPIO_MODE_OUTPUT_OD;
-    temp.Pull = GPIO_NOPULL;// подтянуть в случаи отсутсвии резаков
+    temp.Pull = GPIO_NOPULL;
     temp.Speed = GPIO_SPEED_FREQ_HIGH;// возможно стоит поставить GPIO_SPEED_FREQ_MEDIUM
     HAL_GPIO_Init(sdaPort, &temp);
     HAL_GPIO_WritePin(sdaPort, sdaPin, GPIO_PIN_SET);
 
     temp.Pin =sclPin;
     temp.Mode = GPIO_MODE_OUTPUT_OD;
-    temp.Pull = GPIO_NOPULL;// подтянуть при отсутсвии резаков
+    temp.Pull = GPIO_NOPULL;
     temp.Speed = GPIO_SPEED_FREQ_HIGH;// возможно стоит поставить GPIO_SPEED_FREQ_MEDIUM
     HAL_GPIO_Init(sclPort, &temp);
     HAL_GPIO_WritePin(sclPort, sclPin, GPIO_PIN_SET);
