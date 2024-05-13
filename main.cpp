@@ -20,7 +20,7 @@ union matherBoardEnambleSlotFlags{
 };
 
 
-MCP2515 can0 = MCP2515( spi0, 17, 19, 16, 18);
+MCP2515 can0 = MCP2515(spi0, 17, 19, 16, 18);
 
 INA3221::INA3221 ina3221_1 = INA3221::INA3221(i2c0, 20, 21, 0x42, 4.2, 3.3, 0.2);
 INA3221::INA3221 ina3221_2 = INA3221::INA3221(i2c0, 20, 21, 0x43, 4.2, 3.3, 0.2);
@@ -31,11 +31,11 @@ INA3221::INA3221 ina3221_solar_2 = INA3221::INA3221(i2c0, 20, 21, 0x41, 4.2, 3.3
 PCA9554 pca9554_1 = PCA9554(i2c0, 21, 20, 0x3F, 0x40);
 PCA9554 pca9554_2 = PCA9554(i2c0, 21, 20, 0x38, 0x70);
 
-INA219::INA219 ina219_slot = INA219::INA219(i2c0, 20, 21,  0x44, 4.2, 1.0, 3.2, 0.1, 3291);
+INA219::INA219 ina219_slot = INA219::INA219(i2c0, 20, 21,  0x44, 0.150, 4.2, 3.2, 0.1, 4096);
 
 float convertionFactor = 3.009 / (4095.0) * (5.0 / 3.0);
-
 double A = 0.8781625571e-3;
+
 double B = 2.531972392e-4;
 double C = 1.840753501e-7;
 
@@ -103,99 +103,88 @@ int main() {
     can0.setNormalMode();
 
     pca9554_1.enableSlot(9);
-//    pca9554_1.enableSlot(1 );
+    pca9554_2.enableSlot(3);
 
 
 
     while (true) {
 
-//        printf("\nI2C Bus Scan\n");
-//        printf("   0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F\n");
+        printf("\nI2C Bus Scan\n");
+        printf("   0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F\n");
+
+        for (int addr = 0; addr < (1 << 7); ++addr) {
+            if (addr % 16 == 0) {
+                printf("%02x ", addr);
+            }
+
+            int ret;
+            uint8_t rxdata;
+            if (reserved_addr(addr))
+                ret = PICO_ERROR_GENERIC;
+            else
+                ret = i2c_read_blocking(i2c_default, addr, &rxdata, 1, false);
+
+            printf(ret < 0 ? "." : "@");
+            printf(addr % 16 == 15 ? "\n" : "  ");
+        }
+        busy_wait_ms(1000);
+
+//        MatherBoardTelemtry[0] = ina3221_1.GetVoltage(1);
+//        MatherBoardTelemtry[1] = ina3221_1.GetCurrent(1);
 //
-//        for (int addr = 0; addr < (1 << 7); ++addr) {
-//            if (addr % 16 == 0) {
-//                printf("%02x ", addr);
-//            }
+//        MatherBoardTelemtry[2] = ina3221_1.GetVoltage(3);
+//        MatherBoardTelemtry[3] = ina3221_1.GetCurrent(3);
 //
-//            int ret;
-//            uint8_t rxdata;
-//            if (reserved_addr(addr))
-//                ret = PICO_ERROR_GENERIC;
-//            else
-//                ret = i2c_read_blocking(i2c_default, addr, &rxdata, 1, false);
+//        MatherBoardTelemtry[5] = ina3221_2.GetVoltage(1);
+//        MatherBoardTelemtry[6] = ina3221_2.GetCurrent(1);
 //
-//            printf(ret < 0 ? "." : "@");
-//            printf(addr % 16 == 15 ? "\n" : "  ");
-//        }
-
-        MatherBoardTelemtry[0] = ina3221_1.GetVoltage(1);
-        MatherBoardTelemtry[1] = ina3221_1.GetCurrent(1);
-
-        MatherBoardTelemtry[2] = ina3221_1.GetVoltage(3);
-        MatherBoardTelemtry[3] = ina3221_1.GetCurrent(3);
-
-        MatherBoardTelemtry[5] = ina3221_2.GetVoltage(1);
-        MatherBoardTelemtry[6] = ina3221_2.GetCurrent(1);
-
-        MatherBoardTelemtry[7] = ina3221_2.GetVoltage(3);
-        MatherBoardTelemtry[8] = ina3221_2.GetCurrent(3);
-
-        float TBat_1 = ina3221_1.GetVoltage(2);
-        float TBatShunt_1 = ina3221_1.GetShuntVoltage(2);
-
-        float TBat_2 = ina3221_2.GetVoltage(2);
-        float TBatShunt_2 = ina3221_2.GetShuntVoltage(2);
-
-        float RTermistorBat_1 = TBat_1 / (TBatShunt_1 / INA3221_SHUNT_T_RESISTANCE);
-        float RTermistorBat_2 = TBat_2 / (TBatShunt_2 / INA3221_SHUNT_T_RESISTANCE);
-
-        MatherBoardTelemtry[4] = 1.0 / (A + B * log(RTermistorBat_1) + C * pow(log(RTermistorBat_1), 3));
-        MatherBoardTelemtry[9] = 1.0 / (A + B * log(RTermistorBat_2) + C * pow(log(RTermistorBat_2), 3));
-
-        MatherBoardTelemtry[4] -= 273.15;
-        MatherBoardTelemtry[9] -= 273.15;
-
-        MatherBoardTelemtry[10] = ina3221_solar_1.GetVoltage(1);
-        MatherBoardTelemtry[11] = ina3221_solar_1.GetCurrent(1) * (-1);
-
-        MatherBoardTelemtry[12] = ina3221_solar_2.GetVoltage(1);
-        MatherBoardTelemtry[13] = ina3221_solar_2.GetCurrent(1) * (-1);
-
-        MatherBoardTelemtry[14] = ina3221_solar_1.GetVoltage(3);
-        MatherBoardTelemtry[15] = ina3221_solar_1.GetCurrent(3) * (-1);
-
-        MatherBoardTelemtry[16] = ina3221_solar_2.GetVoltage(3);
-        MatherBoardTelemtry[17] = ina3221_solar_2.GetCurrent(3) * (-1);
-
-        MatherBoardTelemtry[18] = ADCRead(0);
-        MatherBoardTelemtry[19] = ADCRead(1);
-        MatherBoardTelemtry[20] = ADCRead(2);
-
-//        getActiveParametrs(1, 28);
-//        ina219_slot.changeAddres(0x4e);
-//        MatherBoardTelemtry[28]  =  ina219_slot.get_voltage();
-//        MatherBoardTelemtry[29]  =  ina219_slot.get_current();
-        getActiveParametrs(3, 30);
-        getActiveParametrs(4, 32);
-        getActiveParametrs(5, 34);
-        getActiveParametrs(6, 36);
-        getActiveParametrs(8, 38);
-        getActiveParametrs(9, 40);
-        getActiveParametrs(10, 42);
-
-        enableFlags1345.flagSlot1 = pca9554_1.getEnableFlag(1);
-        enableFlags1345.flagSlot2 = pca9554_1.getEnableFlag(8);
-        enableFlags1345.flagSlot3 = pca9554_1.getEnableFlag(9);
-        enableFlags1345.flagSlot4 = pca9554_1.getEnableFlag(10);
-
-        enableFlags6891.flagSlot1 =  pca9554_2.getEnableFlag(3);
-        enableFlags6891.flagSlot2 =  pca9554_2.getEnableFlag(4);
-        enableFlags6891.flagSlot3 =  pca9554_2.getEnableFlag(5);
-        enableFlags6891.flagSlot4 =  pca9554_2.getEnableFlag(6);
-
-        MatherBoardTelemtry[44] = enableFlags1345.data;
-        MatherBoardTelemtry[45] = enableFlags6891.data;
-
+//        MatherBoardTelemtry[7] = ina3221_2.GetVoltage(3);
+//        MatherBoardTelemtry[8] = ina3221_2.GetCurrent(3);
+//
+//
+//
+//        MatherBoardTelemtry[10] = ina3221_solar_1.GetVoltage(1);
+//        MatherBoardTelemtry[11] = ina3221_solar_1.GetCurrent(1) * (-1);
+//
+//        MatherBoardTelemtry[12] = ina3221_solar_2.GetVoltage(1);
+//        MatherBoardTelemtry[13] = ina3221_solar_2.GetCurrent(1) * (-1);
+//
+//        MatherBoardTelemtry[14] = ina3221_solar_1.GetVoltage(3);
+//        MatherBoardTelemtry[15] = ina3221_solar_1.GetCurrent(3) * (-1);
+//
+//        MatherBoardTelemtry[16] = ina3221_solar_2.GetVoltage(3);
+//        MatherBoardTelemtry[17] = ina3221_solar_2.GetCurrent(3) * (-1);
+//
+//        MatherBoardTelemtry[18] = ADCRead(0);
+//        MatherBoardTelemtry[19] = ADCRead(1);
+//        MatherBoardTelemtry[20] = ADCRead(2);
+//
+////        getActiveParametrs(1, 28);
+////        ina219_slot.changeAddres(0x4e);
+////        MatherBoardTelemtry[28]  =  ina219_slot.get_voltage();
+////        MatherBoardTelemtry[29]  =  ina219_slot.get_current();
+//        getActiveParametrs(2, 28);
+//        getActiveParametrs(3, 30);
+//        getActiveParametrs(4, 32);
+//        getActiveParametrs(5, 34);
+//        getActiveParametrs(6, 36);
+//        getActiveParametrs(8, 38);
+//        getActiveParametrs(9, 40);
+//        getActiveParametrs(10, 42);
+//
+//        enableFlags1345.flagSlot1 = pca9554_1.getEnableFlag(1);
+//        enableFlags1345.flagSlot2 = pca9554_1.getEnableFlag(8);
+//        enableFlags1345.flagSlot3 = pca9554_1.getEnableFlag(9);
+//        enableFlags1345.flagSlot4 = pca9554_1.getEnableFlag(10);
+//
+//        enableFlags6891.flagSlot1 =  pca9554_2.getEnableFlag(3);
+//        enableFlags6891.flagSlot2 =  pca9554_2.getEnableFlag(4);
+//        enableFlags6891.flagSlot3 =  pca9554_2.getEnableFlag(5);
+//        enableFlags6891.flagSlot4 =  pca9554_2.getEnableFlag(6);
+//
+//        MatherBoardTelemtry[44] = enableFlags1345.data;
+//        MatherBoardTelemtry[45] = enableFlags6891.data;
+//
     }
 }
 

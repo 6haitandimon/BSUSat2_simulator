@@ -1,7 +1,16 @@
+import socket
+from construct import *
+import time
 
-from construct import*
+UDP_IP = "127.0.0.1"
+UDP_PORT = 9999
 
-data=bytes.fromhex('4a0c8240a913d03d4a0c8240a913d03d26bf71c14a0c8240a913d03dc1ca8140cdaacf3d26bf71c16f12033c17b751b96f12033c17b751b98b6c673fa223b9bc6f12033c17b751b9b175213f7c420a3fec20814000000000000000000000000000000000000000000000000000000000ae47e941d94e69420ad7a33c000000006f12833c000000000ad7a33c00000000a69bc43c000000004260e53c000000007368814000000000a69bc43c00000000000080470000000000000000')
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+sock.bind((UDP_IP, UDP_PORT))
+sock.settimeout(0.5)
+
+# data=bytes.fromhex('4a0c8240a913d03d4a0c8240a913d03d26bf71c14a0c8240a913d03dc1ca8140cdaacf3d26bf71c16f12033c17b751b96f12033c17b751b98b6c673fa223b9bc6f12033c17b751b9b175213f7c420a3fec20814000000000000000000000000000000000000000000000000000000000ae47e941d94e69420ad7a33c000000006f12833c000000000ad7a33c00000000a69bc43c000000004260e53c000000007368814000000000a69bc43c00000000000080470000000000000000')
 
 ff=Struct(
     "ina3221_1_1_voltage"/Float32l, #0
@@ -75,6 +84,23 @@ ff=Struct(
     "enableSlot6:"/Int8ul#------45
 )
 
-print(data)
+# print(data)
 
-print(ff.parse(data[:]))
+# print(ff.parse(data[:]))
+
+
+def main():
+    while True:
+        try:
+            data, addr = sock.recvfrom(256) # buffer size is 1024 bytes
+           
+            RawTelemetry = bytes.fromhex("".join('{:02x}'.format(x) for x in data))
+            # print(RawTelemetry)
+            # lengthPacket = Int8ul.parse(RawTelemetry[:])
+            
+            print(ff.parse(RawTelemetry[16:]))
+            print(time.strftime('%H:%M:%S'))
+        except socket.timeout:
+            pass
+
+main()

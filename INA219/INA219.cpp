@@ -94,7 +94,7 @@ namespace INA219 {
         this->_calibrationValue.byte = calibration_value;
         for(int i = addr; i < addr + 9; i++){
             this->_i2cAddr = addr;
-            configuration(false, RESET_SYSTEM, RANGE_32V, GAIN_8_320MV, ADC_12BIT, ADC_12BIT, __CONT_SH_BUS);
+            configuration(true, NO_RESET_SYSTEM, RANGE_32V, GAIN_8_320MV, ADC_128SAMP, ADC_128SAMP, __CONT_SH_BUS);
         }
     }
 
