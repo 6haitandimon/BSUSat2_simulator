@@ -111,6 +111,14 @@ namespace INA3221 {
 
         float GetShuntVoltage(uint8_t channel);
 
+        uint16_t GetVoltageRAW(uint8_t channel);
+
+        uint16_t GetCurrentRAW(uint8_t channel);
+
+        uint16_t GetPowerRAW(uint8_t channel);
+
+        uint16_t GetShuntVoltageRAW(uint8_t channel);
+
     };
 }
 

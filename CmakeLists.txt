@@ -14,6 +14,7 @@ add_subdirectory(INA3221)
 add_subdirectory(INA219)
 add_subdirectory(INTERRUPT)
 add_subdirectory(CANTRANSMIT)
+add_subdirectory(RTC)
 
 
 add_executable(MatherBoard
@@ -28,10 +29,15 @@ pico_add_extra_outputs(MatherBoard)
 target_link_libraries(MatherBoard
         pico_stdlib
         hardware_adc
+        hardware_flash
+        hardware_sync
+        hardware_clocks
+        hardware_rtc
         PCA9554
         MCP2515
         INA3221
         INA219
         INTERRUPT
         CANTRANSMIT
+        RTC
 )

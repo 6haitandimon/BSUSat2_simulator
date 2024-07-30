@@ -48,28 +48,22 @@ void PCA9554::slotAdd(uint8_t slotNumber, uint8_t slotAddress) {
 }
 
 bool PCA9554::enableSlot(uint8_t slotNumber) {
-    if (write(PCA9554_REG_OUTPUT_PORT, this->slotBit[slotNumber].slotbit)) {
+    uint8_t value = read(PCA9554_REG_INPUT_PORT) | slotBit[slotNumber].slotbit;
+    if (write(PCA9554_REG_OUTPUT_PORT, value)) {
         this->slotBit[slotNumber].enableFlags = 1;
-        printf("Slot enable successful\n");
         return 1;
     } else {
-        printf("slot enable error\n");
         return 0;
     }
 }
 
 bool PCA9554::disableSlot(uint8_t slotNumber) {
     uint8_t configRegStatus = read(PCA9554_REG_INPUT_PORT);
-    //for debug
-    printf("config reg status: %d\n", configRegStatus);
-    printf("Slot bit status: %d\n", configRegStatus ^ this->slotBit[slotNumber].slotbit);
 
     if (write(PCA9554_REG_OUTPUT_PORT, configRegStatus ^ this->slotBit[slotNumber].slotbit)) {
         this->slotBit[slotNumber].enableFlags = 0;
-        printf("Slot enable successful\n");
-        return 1;
+         return 1;
     } else {
-        printf("slot enable error\n");
         return 0;
     }
     // if(write(PCA9554_REG_OUTPUT_PORT, this->slotBit[slotNumber])){

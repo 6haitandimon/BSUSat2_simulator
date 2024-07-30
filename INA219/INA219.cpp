@@ -21,7 +21,6 @@ namespace INA219 {
         write_data[0] = register_address;
         write_data[1] = register_value.d;
         write_data[2] = register_value.l;
-        printf("calibration byte: %d\n", register_value.byte);
 
         i2c_write_blocking(i2c0, this->_i2cAddr, write_data, 3, false);
     }
@@ -32,10 +31,23 @@ namespace INA219 {
         return (float) (value >> 3) * __BUS_MILLIVOLTS_LSB / 1000.0;
     }
 
+    uint16_t INA219::get_voltageRAW() {
+        uint16_t value = read_register(__REG_BUSVOLTAGE);
+
+        return value;
+    }
+
     float INA219::get_current() {
         uint16_t value = read_register(__REG_CURRENT);
 
         return ((float) value / 1000.0);
+
+    }
+
+    uint16_t INA219::get_currentRAW() {
+        uint16_t value = read_register(__REG_CURRENT);
+
+        return value;
 
     }
 
@@ -46,22 +58,41 @@ namespace INA219 {
 
     }
 
+    uint16_t INA219::get_current_mARAW() {
+        uint16_t value = read_register(__REG_CURRENT);
+
+        return value;
+
+    }
+
 
     float INA219::get_power_mW() {
         uint16_t value = read_register(__REG_POWER);
-        printf("power reg: %f\n, power_lsb: %f\n", (float) value, this->_powerLsb);
         return (float) (value * this->_powerLsb * 1000.0);
+    }
+
+    uint16_t INA219::get_power_mWRAW() {
+        uint16_t value = read_register(__REG_POWER);
+        return value;
     }
 
     float INA219::get_power() {
         uint16_t value = read_register(__REG_POWER);
-        printf("power reg: %f\n, power_lsb: %f\n", (float) value, this->_powerLsb);
         return (float) (value * this->_powerLsb);
+    }
+    uint16_t INA219::get_powerRAW() {
+        uint16_t value = read_register(__REG_POWER);
+        return value;
     }
 
     float INA219::get_current_from_shunt_in_mA() {
         float value = (get_shunt_voltage_in_mV() / 10);
         return (value / this->_shuntResistorOhms);
+    }
+
+    uint16_t INA219::get_current_from_shunt_in_mARAW() {
+        uint16_t value = get_shunt_voltage_in_mVRAW();
+        return value;
     }
 
     float INA219::get_shunt_voltage_in_mV() {
@@ -71,6 +102,15 @@ namespace INA219 {
             value -= 65535;
 
         return ((float) value * 0.01);
+    }
+
+    uint16_t INA219::get_shunt_voltage_in_mVRAW() {
+        uint16_t value = read_register(__REG_SHUNTVOLTAGE);
+
+//        if (value > 32767)
+//            value -= 65535;
+
+        return value;
     }
 
 

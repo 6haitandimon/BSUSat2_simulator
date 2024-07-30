@@ -219,6 +219,7 @@ namespace INA219 {
      * @return Voltage value
     */
         float get_voltage();
+        uint16_t get_voltageRAW();
 
         /**
      * @brief Getting the current in miles Amperes
@@ -226,6 +227,7 @@ namespace INA219 {
      * @return Volt value (float)
     */
         float get_current_mA();
+        uint16_t get_current_mARAW();
 
 /**
  * @brief Getting the current in Amperes
@@ -233,6 +235,7 @@ namespace INA219 {
  * @return Current value in Amperes (float)
 */
         float get_current();
+        uint16_t get_currentRAW();
 
 /**
  * @brief Getting the power in miles Wattah
@@ -240,6 +243,7 @@ namespace INA219 {
  * @return Power value in miles Wattah (float)
 */
         float get_power_mW();
+        uint16_t get_power_mWRAW();
 
 /**
  * @brief Getting the power in Wattah
@@ -247,6 +251,7 @@ namespace INA219 {
  * @return Power value in Wattah (float)
 */
         float get_power();
+        uint16_t get_powerRAW();
 
 /**
  * @brief Obtaining the power of the current on the shunt in miles Amperes
@@ -254,6 +259,7 @@ namespace INA219 {
  * @return Shunt current value in miles Amperes (float)
 */
         float get_current_from_shunt_in_mA();
+        uint16_t get_current_from_shunt_in_mARAW();
 
 /**
  * @brief Obtaining the shunt voltage in miles Volts
@@ -261,6 +267,7 @@ namespace INA219 {
  * @return Shunt voltage value in miles Volts (float)
 */
         float get_shunt_voltage_in_mV();
+        uint16_t get_shunt_voltage_in_mVRAW();
 /**
  * @brief Change INA address
  *

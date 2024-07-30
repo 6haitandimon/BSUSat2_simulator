@@ -68,7 +68,7 @@ class cubimrtlsdr(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.sig_freq = sig_freq = 433847000
+        self.sig_freq = sig_freq = 434841470
         self.sig_baudrate = sig_baudrate = 9600
         self.sdr_freq_offset = sdr_freq_offset = 0
         self.fir_samp_per_sym = fir_samp_per_sym = 2

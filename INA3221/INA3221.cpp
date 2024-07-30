@@ -65,6 +65,27 @@ namespace INA3221 {
         return (float) GetShuntVoltage(channel) / this->_shunt_resistor_ohms;
 
     }
+    uint16_t INA3221::GetVoltageRAW(uint8_t channel) {
+        uint16_t __REG_BUSVOLTAGE = 0;
+        if (channel == 1)
+            __REG_BUSVOLTAGE = __REG_BUSVOLTAGE_1;
+        else if (channel == 2)
+            __REG_BUSVOLTAGE = __REG_BUSVOLTAGE_2;
+        else if (channel == 3)
+            __REG_BUSVOLTAGE = __REG_BUSVOLTAGE_3;
+        else {
+            printf("Error channel");
+            __REG_BUSVOLTAGE = 0;
+        }
+        uint16_t value = ReadRegister(__REG_BUSVOLTAGE);
+
+        return value;
+    }
+
+    uint16_t INA3221::GetCurrentRAW(uint8_t channel) {
+        return GetShuntVoltageRAW (channel);
+
+    }
 
     void INA3221::Configuration() {
 
@@ -83,11 +104,11 @@ namespace INA3221 {
     float INA3221::GetShuntVoltage(uint8_t channel) {
         uint16_t __REG_SHUNTVOLTAGE = 0;
         if (channel == 1)
-            __REG_SHUNTVOLTAGE = __REG_BUSVOLTAGE_1;
+            __REG_SHUNTVOLTAGE = __REG_SHUNTVOLTAGE_1;
         else if (channel == 2)
-            __REG_SHUNTVOLTAGE = __REG_BUSVOLTAGE_2;
+            __REG_SHUNTVOLTAGE = __REG_SHUNTVOLTAGE_2;
         else if (channel == 3)
-            __REG_SHUNTVOLTAGE = __REG_BUSVOLTAGE_3;
+            __REG_SHUNTVOLTAGE = __REG_SHUNTVOLTAGE_3;
         else {
             printf("Error channel");
             __REG_SHUNTVOLTAGE = 0;
@@ -102,5 +123,29 @@ namespace INA3221 {
 
     float INA3221::GetPower(uint8_t channel) {
         return (float) (GetCurrent(channel) * GetVoltage(channel));
+    }
+
+    uint16_t INA3221::GetShuntVoltageRAW(uint8_t channel) {
+        uint16_t __REG_SHUNTVOLTAGE = 0;
+        if (channel == 1)
+            __REG_SHUNTVOLTAGE = __REG_SHUNTVOLTAGE_1;
+        else if (channel == 2)
+            __REG_SHUNTVOLTAGE = __REG_SHUNTVOLTAGE_2;
+        else if (channel == 3)
+            __REG_SHUNTVOLTAGE = __REG_SHUNTVOLTAGE_3;
+        else {
+            printf("Error channel");
+            __REG_SHUNTVOLTAGE = 0;
+        }
+        uint16_t value = ReadRegister(__REG_SHUNTVOLTAGE);
+
+        if (value > 32767)
+            value -= 65535;
+
+        return value;
+    }
+
+    uint16_t INA3221::GetPowerRAW(uint8_t channel) {
+        return (GetCurrentRAW(channel) * GetVoltageRAW(channel));
     }
 }

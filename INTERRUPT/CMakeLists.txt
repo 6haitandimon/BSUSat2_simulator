@@ -13,4 +13,5 @@ target_link_libraries(INTERRUPT
         hardware_spi
         MCP2515
         CANTRANSMIT
+        RTC
 )

@@ -2,16 +2,16 @@
 
 namespace CAN{
     union canByte{
-        float data;
+        uint16_t data;
         struct{
-            uint8_t byte[4];
+            uint8_t byte[2];
         };
     };
 
 //    static uint8_t busyByte = 1;
 //    static const uint8_t freeByte = 8;
 
-    int CanPreparation(can_frame &canFrame, uint8_t needToByte, float data){
+    int8_t CanPreparation(can_frame &canFrame, uint8_t needToByte, uint16_t data){
         canByte canData;
         canData.data = data;
 //        if(busyByte + needToByte > freeByte){
