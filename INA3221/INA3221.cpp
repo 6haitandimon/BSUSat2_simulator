@@ -79,6 +79,12 @@ namespace INA3221 {
         }
         uint16_t value = ReadRegister(__REG_BUSVOLTAGE);
 
+        if(value >= (UINT16_MAX / 2 + 1))
+            value = 0;
+//
+//        if(value == UINT16_MAX)
+//            value = 0;
+
         return value;
     }
 
@@ -115,8 +121,8 @@ namespace INA3221 {
         }
         uint16_t value = ReadRegister(__REG_SHUNTVOLTAGE);
 
-        if (value > 32767)
-            value -= 65535;
+        if(value >= 32767)
+            value -= 65534;
 
         return (float) (value >> 3) * 0.00004;
     }
@@ -139,10 +145,14 @@ namespace INA3221 {
         }
         uint16_t value = ReadRegister(__REG_SHUNTVOLTAGE);
 
-        if (value > 32767)
-            value -= 65535;
-
-        return value;
+//        if (value > 32767)
+//            value -= 65535;
+        if(value >= (UINT16_MAX / 2 + 1))
+            value = 0;
+//
+//        if(value == UINT16_MAX)
+//            value = 0;
+//        return value;
     }
 
     uint16_t INA3221::GetPowerRAW(uint8_t channel) {

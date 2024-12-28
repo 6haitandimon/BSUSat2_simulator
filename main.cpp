@@ -196,10 +196,10 @@ int main() {
 //        printf("seconds: %d\n\n", rtc.second());
         MatherBoardTelemtry[0] = ina3221_1.GetVoltageRAW(1);
         MatherBoardTelemtry[1] = ina3221_1.GetCurrentRAW(1);
-
+//
         MatherBoardTelemtry[2] = ina3221_1.GetVoltageRAW(3);
         MatherBoardTelemtry[3] = ina3221_1.GetCurrentRAW(3);
-
+//
         MatherBoardTelemtry[4] = ina3221_1.GetVoltageRAW(2);
         MatherBoardTelemtry[5] = ina3221_1.GetShuntVoltageRAW(2);
 
@@ -226,14 +226,14 @@ int main() {
         MatherBoardTelemtry[23] = ADCReadRAW(1);
         MatherBoardTelemtry[24] = ADCReadRAW(2);
 
-        MatherBoardTelemtry[25] = 256;
-        MatherBoardTelemtry[26] = 256;
+        MatherBoardTelemtry[25] = 5;
+        MatherBoardTelemtry[26] = 5;
 
-        MatherBoardTelemtry[27] = 256;
-        MatherBoardTelemtry[28] = 256;
+        MatherBoardTelemtry[27] = 5;
+        MatherBoardTelemtry[28] = 5;
 
         getActiveParametrs(2, 29);
-        printf("module 2 V:%d, C:%d\n", MatherBoardTelemtry[29], MatherBoardTelemtry[30]);
+//        printf("module 2 V:%d, C:%d\n", MatherBoardTelemtry[29], MatherBoardTelemtry[30]);
         getActiveParametrs(3, 31);
         getActiveParametrs(4, 33);
         getActiveParametrs(5, 35);
@@ -242,6 +242,7 @@ int main() {
         getActiveParametrs(8, 41);
         getActiveParametrs(9, 43);
         getActiveParametrs(10, 45);
+
 
         MatherBoardTelemtry[47] = ina3221_solar_1.GetVoltageRAW(1);
         MatherBoardTelemtry[48] = ina3221_solar_1.GetCurrentRAW(1);
@@ -262,8 +263,8 @@ int main() {
         MatherBoardTelemtry[58] = ina3221_solar_2.GetCurrentRAW(2);
 
         MatherBoardTelemtry[59] = getEnambleStatus();
-        MatherBoardTelemtry[60] = 256;
-        MatherBoardTelemtry[61] = 256;
+        MatherBoardTelemtry[60] = 500;
+        MatherBoardTelemtry[61] = 500;
 
 
 //        busy_wait_ms(1000);

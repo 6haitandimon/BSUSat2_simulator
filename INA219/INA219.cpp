@@ -34,6 +34,12 @@ namespace INA219 {
     uint16_t INA219::get_voltageRAW() {
         uint16_t value = read_register(__REG_BUSVOLTAGE);
 
+        if(value >= (UINT16_MAX / 2 + 1))
+            value = 0;
+
+//        if(value == UINT16_MAX)
+//            value = 0;
+
         return value;
     }
 
@@ -92,6 +98,13 @@ namespace INA219 {
 
     uint16_t INA219::get_current_from_shunt_in_mARAW() {
         uint16_t value = get_shunt_voltage_in_mVRAW();
+
+        if(value >= (UINT16_MAX / 2 + 1))
+            value = 0;
+
+//        if(value == UINT16_MAX)
+//            value = 0;
+
         return value;
     }
 
