@@ -11,7 +11,4 @@ target_link_libraries(INTERRUPT
         INTERFACE
         pico_stdlib
         hardware_spi
-        MCP2515
-        CANTRANSMIT
-        RTC
 )
