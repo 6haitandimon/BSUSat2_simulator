@@ -1,50 +1,29 @@
 cmake_minimum_required(VERSION 3.13)
 
+
+set(PICO_SDK_PATH "${CMAKE_SOURCE_DIR}/external/pico-sdk")
+set(PICOTOOL_FORCE_FETCH_FROM_GIT ON)
+
+#add sdk import
 include(pico_sdk_import.cmake)
-project(MatherBoard C CXX ASM)
+
+project(CubeBEL_2_SIM C CXX ASM)
+
+pico_sdk_init()
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
 
-pico_sdk_init()
-
-add_subdirectory(PCA9554)
-add_subdirectory(MCP2515)
-add_subdirectory(INA3221)
-add_subdirectory(INA219)
-add_subdirectory(INTERRUPT)
-add_subdirectory(CANTRANSMIT)
-add_subdirectory(RTC)
-
-add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf.map)
-add_executable(MatherBoard
-        main.cpp
-)
-
-pico_enable_stdio_usb(MatherBoard 1)
-pico_enable_stdio_uart(MatherBoard 0)
-
-pico_add_extra_outputs(MatherBoard)
-#
-#add_custom_command(TARGET MatherBoard POST_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E echo "===== Memory Map ====="
-#        COMMAND ${CMAKE_COMMAND} -E cat "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.elf.map"
-#        COMMAND ${CMAKE_COMMAND} -E echo "=======================")
 
 
-target_link_libraries(MatherBoard
-        pico_stdlib
-        hardware_adc
-        hardware_flash
-        hardware_sync
-        hardware_clocks
-        hardware_rtc
-        PCA9554
-        MCP2515
-        INA3221
-        INA219
-        INTERRUPT
-        CANTRANSMIT
-        RTC
-)
+
+#add libs
+add_subdirectory(libs)
+
+#adding module firmware for compilation
+add_subdirectory(modules/MotherBoard)
+
+#add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf.map)
+
+

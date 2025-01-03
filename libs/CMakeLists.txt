@@ -1,0 +1,6 @@
+add_subdirectory(CAN)
+add_subdirectory(INA219)
+add_subdirectory(INA3221)
+add_subdirectory(MCP2515)
+add_subdirectory(PCA9554)
+add_subdirectory(RTC)
