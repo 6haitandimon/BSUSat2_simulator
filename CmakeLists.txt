@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.13)
 
 
 set(PICO_SDK_PATH "${CMAKE_SOURCE_DIR}/external/pico-sdk")
-set(PICOTOOL_FORCE_FETCH_FROM_GIT ON)
+#set(PICOTOOL_FORCE_FETCH_FROM_GIT ON)
+#set(PICOTOOL_FETCH_FROM_GIT_PATH ON)
 
 #add sdk import
 include(pico_sdk_import.cmake)
@@ -14,16 +15,33 @@ pico_sdk_init()
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
-
-
-
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+    message(STATUS "Maximum optimization for speed")
+    add_compile_options(-Ofast)
+elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
+    message(STATUS "Maximum optimization for speed, debug info included")
+    add_compile_options(-Ofast -g)
+elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
+    message(STATUS "Maximum optimization for size")
+    add_compile_options(-Os)
+elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    message(STATUS "Max debug info")
+    add_compile_options(-O0 -g3)
+else ()
+    message(STATUS "Minimal optimization, debug info included")
+    add_compile_options(-Og -g)
+endif ()
 
 #add libs
 add_subdirectory(libs)
 
+#temporary
+add_subdirectory(INTERRUPT)
+
 #adding module firmware for compilation
 add_subdirectory(modules/MotherBoard)
 
-#add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.elf.map)
+
+#set(CMAKE_EXE_LINKER_FLAGS "-Xlinker -Map=memory_map.map")
 
 
