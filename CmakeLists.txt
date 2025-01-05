@@ -55,4 +55,5 @@ if (DEVELOP_MODE STREQUAL 0)
 else ()
     #manual add modules from develop
     add_subdirectory(modules/MotherBoard)
+    add_subdirectory(modules/RadioTransmitter)
 endif ()

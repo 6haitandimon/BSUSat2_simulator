@@ -1,0 +1,1 @@
+//// Created by Dzmitryj Bareika on 5.01.25.//#include <pico/stdlib.h>int main(){  uint8_t LED_PIN = 25;  gpio_init(LED_PIN);  gpio_set_dir(LED_PIN, GPIO_OUT);  while(true){    gpio_put(LED_PIN, true);    busy_wait_ms(100);    gpio_put(LED_PIN, false);    busy_wait_ms(100);  }}
