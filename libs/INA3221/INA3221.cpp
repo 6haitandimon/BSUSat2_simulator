@@ -1,7 +1,7 @@
 #include "ina3221.h"
 
 namespace INA3221 {
-    uint16_t INA3221::ReadRegister(uint8_t register_address) {
+    uint16_t INA3221:: ReadRegister(uint8_t register_address) {
         uint8_t buf[3];
         buf[0] = 0;
         buf[1] = 0;
@@ -12,7 +12,9 @@ namespace INA3221 {
         ret = i2c_read_blocking(this->i2c, this->_addr, buf, 2, false);
         if (ret < 0)
             printf("\nFailed to read register value\n");
-        return (buf[0] << 8) | buf[1];
+
+        uint16_t retValue = (buf[0] << 8) | buf[1];
+        return retValue;
     }
 
     void INA3221::WriteRegister(uint8_t register_address, INA3221::ByByte register_value) {
@@ -41,10 +43,23 @@ namespace INA3221 {
         this->_batt_full = batt_full;
         this->_batt_low = batt_low;
         this->_shunt_resistor_ohms = shunt_resistor_ohms;
+        uint8_t buffer;
+
+        int result = i2c_read_blocking(i2c, addr, &buffer, 1, false);
+
+        if (result >= 0) {
+          this->activeDevice = true;
+        }else{
+          this->activeDevice = false;
+        }
+
     }
 
 
     float INA3221::GetVoltage(uint8_t channel) {
+        if(!this->activeDevice)
+          return 8;
+
         uint16_t __REG_BUSVOLTAGE = 0;
         if (channel == 1)
             __REG_BUSVOLTAGE = __REG_BUSVOLTAGE_1;
@@ -62,10 +77,14 @@ namespace INA3221 {
     }
 
     float INA3221::GetCurrent(uint8_t channel) {
+        if(!this->activeDevice)
+          return 8;
         return (float) GetShuntVoltage(channel) / this->_shunt_resistor_ohms;
 
     }
     uint16_t INA3221::GetVoltageRAW(uint8_t channel) {
+        if(!this->activeDevice)
+          return 8;
         uint16_t __REG_BUSVOLTAGE = 0;
         if (channel == 1)
             __REG_BUSVOLTAGE = __REG_BUSVOLTAGE_1;
@@ -80,7 +99,7 @@ namespace INA3221 {
         uint16_t value = ReadRegister(__REG_BUSVOLTAGE);
 
         if(value >= (UINT16_MAX / 2 + 1))
-            value = 0;
+            value = 1;
 //
 //        if(value == UINT16_MAX)
 //            value = 0;
@@ -89,11 +108,14 @@ namespace INA3221 {
     }
 
     uint16_t INA3221::GetCurrentRAW(uint8_t channel) {
-        return GetShuntVoltageRAW (channel);
-
+      if(!this->activeDevice)
+        return 8;
+      return GetShuntVoltageRAW (channel);
     }
 
     void INA3221::Configuration() {
+      if(!this->activeDevice)
+        return;
 
         ByByte configuration;
         configuration.byte = (RESET_SYSTEM << 15) |
@@ -108,6 +130,8 @@ namespace INA3221 {
     }
 
     float INA3221::GetShuntVoltage(uint8_t channel) {
+        if(!this->activeDevice)
+          return 8;
         uint16_t __REG_SHUNTVOLTAGE = 0;
         if (channel == 1)
             __REG_SHUNTVOLTAGE = __REG_SHUNTVOLTAGE_1;
@@ -128,10 +152,14 @@ namespace INA3221 {
     }
 
     float INA3221::GetPower(uint8_t channel) {
-        return (float) (GetCurrent(channel) * GetVoltage(channel));
+      if(!this->activeDevice)
+        return 8;
+      return (float) (GetCurrent(channel) * GetVoltage(channel));
     }
 
     uint16_t INA3221::GetShuntVoltageRAW(uint8_t channel) {
+        if(!this->activeDevice)
+          return 8;
         uint16_t __REG_SHUNTVOLTAGE = 0;
         if (channel == 1)
             __REG_SHUNTVOLTAGE = __REG_SHUNTVOLTAGE_1;
@@ -148,14 +176,16 @@ namespace INA3221 {
 //        if (value > 32767)
 //            value -= 65535;
         if(value >= (UINT16_MAX / 2 + 1))
-            value = 0;
+            value = 1;
 //
 //        if(value == UINT16_MAX)
 //            value = 0;
-//        return value;
+        return value;
     }
 
     uint16_t INA3221::GetPowerRAW(uint8_t channel) {
-        return (GetCurrentRAW(channel) * GetVoltageRAW(channel));
+      if(!this->activeDevice)
+        return 8;
+      return (GetCurrentRAW(channel) * GetVoltageRAW(channel));
     }
 }

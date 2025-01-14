@@ -184,7 +184,6 @@ int main() {
     pca9554_2.enableSlot(7);
     pca9554_1.enableSlot(9);
 
-    uint8_t sec;
 
     while (true) {
 //        uint16_t datatime[7];
@@ -212,6 +211,8 @@ int main() {
         MatherBoardTelemtry[10] = ina3221_2.GetVoltageRAW(2);
         MatherBoardTelemtry[11] = ina3221_2.GetShuntVoltageRAW(2);
 
+        MatherBoardTelemtry[12] = 0;
+        MatherBoardTelemtry[13] = 0;
 
         MatherBoardTelemtry[14] = ResetCounter;
         MatherBoardTelemtry[15] = (last_reset_time >> 16) & 0xFFFF;
@@ -219,6 +220,9 @@ int main() {
         MatherBoardTelemtry[17] = 100;
         MatherBoardTelemtry[18] = (clock_get_hz(clk_sys) / 1000000);
         MatherBoardTelemtry[19] = cpu_temperature_read_raw();
+
+        MatherBoardTelemtry[20] = 0;
+        MatherBoardTelemtry[21] = 0;
 //        uint32_t rtcUnix = rtc.dataTimeUnix();
 //        printf("unixTime: %d\n", rtcUnix);
 

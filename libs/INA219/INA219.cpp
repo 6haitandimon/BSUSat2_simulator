@@ -35,7 +35,7 @@ namespace INA219 {
         uint16_t value = read_register(__REG_BUSVOLTAGE);
 
         if(value >= (UINT16_MAX / 2 + 1))
-            value = 0;
+            value = 1;
 
 //        if(value == UINT16_MAX)
 //            value = 0;
@@ -100,7 +100,7 @@ namespace INA219 {
         uint16_t value = get_shunt_voltage_in_mVRAW();
 
         if(value >= (UINT16_MAX / 2 + 1))
-            value = 0;
+            value = 1;
 
 //        if(value == UINT16_MAX)
 //            value = 0;

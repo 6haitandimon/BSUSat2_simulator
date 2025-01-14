@@ -91,6 +91,7 @@ namespace INA3221 {
         float _batt_low;
         float _batt_full;
         float _shunt_resistor_ohms;
+        bool activeDevice;
 
         uint16_t ReadRegister(uint8_t register_address);
 

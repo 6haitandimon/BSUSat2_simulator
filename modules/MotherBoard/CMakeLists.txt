@@ -22,7 +22,7 @@ target_link_libraries(MotherBoard
         RTC
 )
 
-pico_enable_stdio_usb(MotherBoard 0)
+pico_enable_stdio_usb(MotherBoard 1)
 pico_enable_stdio_uart(MotherBoard 0)
 
 pico_add_extra_outputs(MotherBoard)
