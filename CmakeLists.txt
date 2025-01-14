@@ -7,6 +7,8 @@ set(PICO_SDK_PATH "${CMAKE_SOURCE_DIR}/external/pico-sdk")
 include(pico_sdk_import.cmake)
 
 project(CubeBEL_2_SIM C CXX ASM)
+#stop the compiler from inling method calls
+#set(PICO_DEOPTIMIZED_DEBUG 1)
 
 pico_sdk_init()
 
@@ -25,14 +27,12 @@ elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
     add_compile_options(-Os)
 elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     message(STATUS "Max debug info")
-    add_compile_options(-O0 -g3)
-else ()
-    message(STATUS "Minimal optimization, debug info included")
     add_compile_options(-Og -g)
 endif ()
 
 #add libs
 add_subdirectory(libs)
+add_subdirectory(external/etl)
 
 #temporary
 add_subdirectory(INTERRUPT)
