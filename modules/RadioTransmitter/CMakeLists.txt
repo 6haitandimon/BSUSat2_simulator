@@ -6,11 +6,15 @@ add_executable(RadioTransmitter
         ${SOURCES}
 )
 
+include_directories(include)
+
 target_link_libraries(RadioTransmitter
         PRIVATE
         pico_stdlib
         SX127x
         etl::etl
+        RADIO
+        TimerManager
 )
 
 pico_enable_stdio_usb(RadioTransmitter 0)

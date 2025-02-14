@@ -1,0 +1,1 @@
+#include "HardwareTimer.h"HardwareTimer::HardwareTimer() {}HardwareTimer& HardwareTimer::getInstance() {  static HardwareTimer instance;  return instance;}void HardwareTimer::start(repeating_timer_callback_t callback) {  add_repeating_timer_us(-1000, callback, nullptr, &timer);}void HardwareTimer::stop() {  cancel_repeating_timer(&timer);}
