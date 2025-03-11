@@ -27,7 +27,7 @@ elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
     add_compile_options(-Os)
 elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     message(STATUS "Max debug info")
-    add_compile_options(-O0 -g)
+    add_compile_options(-O0)
 endif ()
 
 #add libs
